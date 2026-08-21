@@ -97,21 +97,6 @@ const EXTRA_FNO = [
   ["ABB", "ABB India", 7424.0, 7660.0, "INFRA"],
 ];
 
-const EXTRA_500 = [
-  ["PAYTM", "One97 Communications", 1632.0, 1580.2, "FINANCIAL SERVICES"],
-  ["POLYCAB", "Polycab", 8966.0, 9370.0, "INFRA"],
-  ["DIXON", "Dixon Technologies", 14850.0, 14025.0, "IT"],
-  ["KALYANKJIL", "Kalyan Jewellers", 603.55, 610.0, "FMCG"],
-  ["FEDERALBNK", "Federal Bank", 361.0, 354.1, "BANKING"],
-  ["IDFCFIRSTB", "IDFC First Bank", 86.75, 85.05, "BANKING"],
-  ["BANDHANBNK", "Bandhan Bank", 164.8, 166.2, "BANKING"],
-  ["YESBANK", "Yes Bank", 22.8, 22.92, "BANKING"],
-  ["IRCTC", "IRCTC", 484.2, 499.95, "SERVICES"],
-  ["POLICYBZR", "PB Fintech", 1795.2, 1728.1, "FINANCIAL SERVICES"],
-  ["NAUKRI", "Info Edge", 1350.1, 1355.8, "IT"],
-  ["MCX", "MCX", 3185.0, 2933.1, "FINANCIAL SERVICES"],
-];
-
 const INDICES = [
   ["NIFTY", "Nifty 50", 24252.0, 24231.85],
   ["BANKNIFTY", "Bank Nifty", 57761.95, 57495.9],
@@ -261,14 +246,10 @@ function catalog() {
       sector,
       nifty50: true,
       fno: true,
-      nifty500: true,
     });
   }
   for (const [sym, name, close, prev, sector] of EXTRA_FNO) {
-    rows.push({ symbol: sym, name, base: close, prevClose: prev, sector, nifty50: false, fno: true, nifty500: true });
-  }
-  for (const [sym, name, close, prev, sector] of EXTRA_500) {
-    rows.push({ symbol: sym, name, base: close, prevClose: prev, sector, nifty50: false, fno: false, nifty500: true });
+    rows.push({ symbol: sym, name, base: close, prevClose: prev, sector, nifty50: false, fno: true });
   }
   return rows;
 }
@@ -386,7 +367,6 @@ function buildIndex(symbol, name, close, prevClose) {
     sector: "INDEX",
     nifty50: false,
     fno: true,
-    nifty500: false,
     bars,
     prevClose,
     isIndex: true,
@@ -520,7 +500,6 @@ export const Market = {
     const all = [...universe.values()].filter((r) => !r.isIndex);
     if (kind === "NIFTY50") return all.filter((r) => r.nifty50);
     if (kind === "FNO") return all.filter((r) => r.fno);
-    if (kind === "NIFTY500") return all.filter((r) => r.nifty500);
     if (kind === "WATCHLIST") {
       const lists = Storage.getWatchlists();
       const set = new Set(lists.flatMap((l) => l.symbols).map((s) => FY_TO_INTERNAL[s] || s));

@@ -25,7 +25,9 @@ function passes(row, f) {
 
 export function filteredRows() {
   const s = Storage.getScanner();
-  const universe = Market.getUniverse(s.universe || "NIFTY50");
+  const rawU = s.universe || "NIFTY50";
+  const uni = rawU === "NIFTY500" ? "NIFTY50" : rawU;
+  const universe = Market.getUniverse(uni);
   const band = s.scoreBand ?? 0;
   return universe
     .filter((r) =>
@@ -180,7 +182,6 @@ export function renderScanner(root) {
         <select data-k="universe">
           <option ${s.universe === "NIFTY50" ? "selected" : ""}>NIFTY50</option>
           <option ${s.universe === "FNO" ? "selected" : ""}>FNO</option>
-          <option ${s.universe === "NIFTY500" ? "selected" : ""}>NIFTY500</option>
           <option ${s.universe === "WATCHLIST" ? "selected" : ""}>WATCHLIST</option>
         </select>
       </label>

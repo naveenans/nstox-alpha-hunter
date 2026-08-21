@@ -79,7 +79,7 @@ export async function renderSettings(root) {
         ${field("Scan interval (sec)", "intervalSec", s.scanner.intervalSec, "number")}
         <label class="field"><span>Universe</span>
           <select name="universe">
-            <option>NIFTY50</option><option>FNO</option><option>NIFTY500</option><option>WATCHLIST</option>
+            <option>NIFTY50</option><option>FNO</option><option>WATCHLIST</option>
           </select>
         </label>
         <label class="chk"><input type="checkbox" name="analysisMode" ${s.scanner.analysisMode ? "checked" : ""}/> Show setups after hours (prices stay frozen)</label>

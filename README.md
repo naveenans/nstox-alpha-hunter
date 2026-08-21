@@ -104,7 +104,7 @@ If FYERS is disconnected, CORS fails, or the token is empty, Hunter uses realist
 
 ## Scanner logic
 
-Universe: NIFTY 50 · NIFTY 500 · F&O · Watchlist
+Universe: NIFTY 50 · F&O · Watchlist
 
 Default **BUY**
 

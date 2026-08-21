@@ -6,7 +6,6 @@ import { Market } from "./market.js";
 import { Scanner } from "./scanner.js";
 import { Options } from "./options.js";
 import { Levels } from "./levels.js";
-import { Charts } from "./charts.js";
 import { Settings } from "./settings.js";
 import { Alerts } from "./alerts.js";
 import { isFyersConnected } from "./fyers.js";
@@ -18,9 +17,7 @@ const NAV = [
   { href: "scanner.html", id: "scanner", label: "Market Scanner" },
   { href: "nifty50.html", id: "nifty50", label: "NIFTY 50" },
   { href: "fno.html", id: "fno", label: "F&O Stocks" },
-  { href: "nifty500.html", id: "nifty500", label: "NIFTY 500" },
   { href: "options.html", id: "options", label: "Options Finder" },
-  { href: "technicals.html", id: "technicals", label: "Technicals" },
   { href: "levels.html", id: "levels", label: "Intraday Levels" },
   { href: "watchlist.html", id: "watchlist", label: "Watchlist" },
   { href: "settings.html", id: "settings", label: "Settings" },
@@ -481,14 +478,12 @@ function openDetail(sym) {
         <ul class="why">${row.reasons.map((r) => `<li>${r}</li>`).join("") || "<li>Insufficient confluence</li>"}</ul>
         <h3>Risks</h3>
         <ul class="risks">${row.risks.map((r) => `<li>${r}</li>`).join("") || "<li>Standard market risk</li>"}</ul>
-        <div class="chart-box sm" id="modal-chart"></div>
       </div>
     </div>`;
   host.querySelector("#modal-x").onclick = closeDetail;
   host.querySelector("#modal-bg").addEventListener("click", (e) => {
     if (e.target.id === "modal-bg") closeDetail();
   });
-  requestAnimationFrame(() => Charts.renderChart(host.querySelector("#modal-chart"), row, "5"));
 }
 
 function closeDetail() {
@@ -515,14 +510,8 @@ function renderPage() {
     case "fno":
       renderUniverse(root, "FNO", "F&O Stocks");
       break;
-    case "nifty500":
-      renderUniverse(root, "NIFTY500", "NIFTY 500");
-      break;
     case "options":
       Options.render(root);
-      break;
-    case "technicals":
-      Charts.renderTechnicalsPage(root, Market);
       break;
     case "levels":
       Levels.renderLevelsPage(root, Market);
@@ -559,7 +548,7 @@ function boot() {
   Alerts.permission();
   setInterval(paintStatus, 1000);
   Market.subscribe(() => {
-    if (["index", "dashboard", "nifty50", "fno", "nifty500"].includes(PAGE)) {
+    if (["index", "dashboard", "nifty50", "fno"].includes(PAGE)) {
       if (document.getElementById("modal-root")?.innerHTML) return;
       const pageEl = document.querySelector(".page");
       const y = pageEl?.scrollTop;
