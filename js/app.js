@@ -216,8 +216,7 @@ function paintStatus() {
   if (el("pill-mkt"))
     el("pill-mkt").innerHTML = `<i class="${m.code === "OPEN" ? "on" : m.code === "PRE" ? "warn" : "off"}"></i> ${m.label}`;
   if (el("pill-fy")) el("pill-fy").innerHTML = `<i class="${fy ? "on" : "off"}"></i> FYERS ${fy ? "CONNECTED" : "DISCONNECTED"}`;
-  if (el("pill-scan"))
-    el("pill-scan").innerHTML = `<i class="${Scanner.isRunning() ? "on" : "off"}"></i> SCANNER ${Scanner.isRunning() ? "RUNNING" : "IDLE"}`;
+  if (el("pill-scan")) el("pill-scan").innerHTML = `<i class="on"></i> SCANNER READY`;
   if (el("pill-clock")) el("pill-clock").textContent = `${ist.clock} IST`;
   if (el("mode-badge")) {
     const frozen = Market.isFrozen();
@@ -681,7 +680,7 @@ function boot() {
   renderPage();
   paintStatus();
   Market.startTicks(2800);
-  if (settings.scanner.autoScan) Scanner.start();
+  Scanner.start();
   WS.connect();
   Alerts.permission();
   setInterval(paintStatus, 1000);

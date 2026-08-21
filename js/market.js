@@ -593,6 +593,13 @@ function sectorCards(rows) {
   return cards;
 }
 
+function rescoreAll() {
+  for (const row of universe.values()) universe.set(row.symbol, enrich(row));
+  regime = computeRegime([...universe.values()]);
+  for (const [k, v] of universe) universe.set(k, enrich(v));
+  emit();
+}
+
 function emit() {
   const detail = snapshot();
   for (const fn of listeners) fn(detail);
@@ -755,8 +762,9 @@ export const Market = {
     clearInterval(tickTimer);
   },
   refresh() {
-    if (!isCashSessionOpen()) return;
-    stepTicks();
+    if (isCashSessionOpen()) stepTicks();
+    else rescoreAll();
+    if (isFyersConnected()) overlayLiveQuotes();
   },
   fySymbol,
   internalFromFy,

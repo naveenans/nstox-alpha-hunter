@@ -169,14 +169,11 @@ export function scoreSymbol(ta, ctx = {}) {
   return { score, parts, reasons, risks, dir: dirHint > 0 ? "BUY" : dirHint < 0 ? "SELL" : "NONE", label: scoreLabel(score) };
 }
 
-export function decideSignal({ score, dir, rr, ta, regime, marketOpen, analysisMode }) {
+export function decideSignal({ score, dir, rr, ta, regime }) {
   const s = Storage.getSettings().scanner;
   const minScore = s.minScore ?? 8;
   const minRR = s.minRR ?? 2;
   const minRvol = s.minRvol ?? 1.5;
-  const closed = !marketOpen && !analysisMode;
-
-  if (closed) return { signal: "NO TRADE", why: "MARKET CLOSED" };
 
   const choppy = Math.abs(ta.momentum) < 0.15 && ta.rvol < 1.1 && ta.align.bias === "NEUTRAL";
   const weakVol = ta.rvol < minRvol;

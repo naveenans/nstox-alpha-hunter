@@ -6,8 +6,6 @@ import { Market } from "./market.js";
 import { Alerts } from "./alerts.js";
 
 const rowEls = new Map();
-let running = false;
-let timer = null;
 let lastScanAt = 0;
 
 function passes(row, f) {
@@ -164,17 +162,14 @@ function renderCards(host, rows, onOpen) {
 export function renderScanner(root) {
   const s = Storage.getScanner();
   root.innerHTML = `
-    ${Market.isFrozen() ? `<p class="warn-banner">Cash market is closed. Scanner prices are frozen at the previous session.</p>` : ""}
+    ${Market.isFrozen() ? `<p class="warn-banner">Cash market is closed — prices stay at the last session. Scanner still scores every name. Hit Refresh to re-run.</p>` : ""}
     <div class="page-head">
       <div>
-        <p class="kicker">Rule-based confluence</p>
+        <p class="kicker">Rule-based confluence · 24×7</p>
         <h1>Market Scanner</h1>
       </div>
       <div class="scan-controls">
-        <button class="btn gold" id="scan-start">Start</button>
-        <button class="btn ghost" id="scan-stop">Stop</button>
-        <button class="btn ghost" id="scan-refresh">Refresh</button>
-        <label class="toggle"><input type="checkbox" id="scan-auto" ${s.autoScan ? "checked" : ""}/> Auto</label>
+        <button class="btn gold" id="scan-refresh">Refresh</button>
       </div>
     </div>
     <div class="filters" id="scan-filters">
@@ -208,13 +203,6 @@ export function renderScanner(root) {
           <option value="1.5" ${String(s.rvolBand) === "1.5" ? "selected" : ""}>1.5x+</option>
           <option value="2" ${String(s.rvolBand) === "2" ? "selected" : ""}>2x+</option>
           <option value="3" ${String(s.rvolBand) === "3" ? "selected" : ""}>3x+</option>
-        </select>
-      </label>
-      <label>Interval
-        <select data-k="intervalSec">
-          ${[5, 10, 15, 30, 60]
-            .map((n) => `<option value="${n}" ${Number(s.intervalSec) === n ? "selected" : ""}>${n}s</option>`)
-            .join("")}
         </select>
       </label>
       <label class="chk"><input type="checkbox" data-k="aboveVwap" ${s.aboveVwap ? "checked" : ""}/> Above VWAP</label>
@@ -278,47 +266,29 @@ export function renderScanner(root) {
     patch();
   };
   root.querySelector("#scan-filters").addEventListener("change", applyFilter);
-  root.querySelector("#scan-start").onclick = () => Scanner.start();
-  root.querySelector("#scan-stop").onclick = () => Scanner.stop();
-  root.querySelector("#scan-refresh").onclick = () => {
-    if (!Market.isFrozen()) Market.refresh();
+  const run = () => {
     lastScanAt = Date.now();
+    Market.refresh();
+    Alerts.ingest(filteredRows());
     patch();
+    window.dispatchEvent(new CustomEvent("nstox:scan", { detail: { n: filteredRows().length } }));
   };
-  root.querySelector("#scan-auto").onchange = (e) => {
-    Storage.setScanner({ ...Storage.getScanner(), autoScan: e.target.checked });
-    if (e.target.checked) Scanner.start();
-    else Scanner.stop();
-  };
+  root.querySelector("#scan-refresh").onclick = run;
 
   Market.subscribe(patch);
-  patch();
+  run();
 }
 
 export const Scanner = {
   render: renderScanner,
   filteredRows,
   isRunning() {
-    return running;
+    return true;
   },
   start() {
-    if (running) return;
-    running = true;
-    const tick = () => {
-      lastScanAt = Date.now();
-      if (!Market.isFrozen()) Market.refresh();
-      const rows = filteredRows();
-      Alerts.ingest(rows);
-      window.dispatchEvent(new CustomEvent("nstox:scan", { detail: { n: rows.length, running } }));
-    };
-    tick();
-    const sec = Number(Storage.getScanner().intervalSec) || 10;
-    timer = setInterval(tick, sec * 1000);
-    window.dispatchEvent(new CustomEvent("nstox:scan", { detail: { running: true } }));
+    lastScanAt = Date.now();
+    Market.refresh();
+    Alerts.ingest(filteredRows());
   },
-  stop() {
-    running = false;
-    clearInterval(timer);
-    window.dispatchEvent(new CustomEvent("nstox:scan", { detail: { running: false } }));
-  },
+  stop() {},
 };

@@ -76,13 +76,12 @@ export async function renderSettings(root) {
         ${field("Minimum score", "minScore", s.scanner.minScore, "number", 'step="0.1" min="0" max="10"')}
         ${field("Minimum R:R", "minRR", s.scanner.minRR, "number", 'step="0.1"')}
         ${field("Minimum RVOL", "minRvol", s.scanner.minRvol, "number", 'step="0.1"')}
-        ${field("Scan interval (sec)", "intervalSec", s.scanner.intervalSec, "number")}
         <label class="field"><span>Universe</span>
           <select name="universe">
             <option>NIFTY50</option><option>FNO</option><option>WATCHLIST</option>
           </select>
         </label>
-        <label class="chk"><input type="checkbox" name="analysisMode" ${s.scanner.analysisMode ? "checked" : ""}/> Show setups after hours (prices stay frozen)</label>
+        <p class="hint">Scanner scores last-session bars at all hours. Prices stay frozen when cash is closed. Use Refresh on the scanner page to re-run.</p>
       </div>
     </section>
 
