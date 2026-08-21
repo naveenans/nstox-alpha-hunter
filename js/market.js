@@ -9,107 +9,115 @@ import { buildPlan, classicPivots } from "./levels.js";
 import { isFyersConnected, getQuotes } from "./fyers.js";
 
 const NIFTY50 = [
-  ["RELIANCE", "Reliance Industries", 1392, "ENERGY"],
-  ["HDFCBANK", "HDFC Bank", 1678, "BANKING"],
-  ["BHARTIARTL", "Bharti Airtel", 1642, "TELECOM"],
-  ["TCS", "Tata Consultancy", 4185, "IT"],
-  ["ICICIBANK", "ICICI Bank", 1228, "BANKING"],
-  ["SBIN", "State Bank of India", 842, "PSU BANK"],
-  ["INFY", "Infosys", 1864, "IT"],
-  ["BAJFINANCE", "Bajaj Finance", 912, "FINANCIAL SERVICES"],
-  ["HINDUNILVR", "Hindustan Unilever", 2488, "FMCG"],
-  ["ITC", "ITC", 492, "FMCG"],
-  ["LT", "Larsen & Toubro", 3610, "INFRA"],
-  ["MARUTI", "Maruti Suzuki", 12740, "AUTO"],
-  ["AXISBANK", "Axis Bank", 1148, "BANKING"],
-  ["KOTAKBANK", "Kotak Mahindra Bank", 1865, "BANKING"],
-  ["SUNPHARMA", "Sun Pharma", 1722, "PHARMA"],
-  ["HCLTECH", "HCL Technologies", 1788, "IT"],
-  ["M&M", "Mahindra & Mahindra", 2785, "AUTO"],
-  ["ETERNAL", "Eternal", 328, "SERVICES"],
-  ["TITAN", "Titan Company", 3488, "FMCG"],
-  ["ULTRACEMCO", "UltraTech Cement", 11890, "METAL"],
-  ["NTPC", "NTPC", 368, "ENERGY"],
-  ["BAJAJFINSV", "Bajaj Finserv", 1988, "FINANCIAL SERVICES"],
-  ["ADANIENT", "Adani Enterprises", 3012, "ENERGY"],
-  ["ONGC", "ONGC", 268, "ENERGY"],
-  ["POWERGRID", "Power Grid", 332, "ENERGY"],
-  ["WIPRO", "Wipro", 498, "IT"],
-  ["ASIANPAINT", "Asian Paints", 2482, "FMCG"],
-  ["ADANIPORTS", "Adani Ports", 1448, "INFRA"],
-  ["COALINDIA", "Coal India", 412, "ENERGY"],
-  ["JSWSTEEL", "JSW Steel", 978, "METAL"],
-  ["TATASTEEL", "Tata Steel", 162, "METAL"],
-  ["NESTLEIND", "Nestle India", 2388, "FMCG"],
-  ["BEL", "Bharat Electronics", 312, "PSU"],
-  ["JIOFIN", "Jio Financial Services", 246, "FINANCIAL SERVICES"],
-  ["GRASIM", "Grasim Industries", 2688, "METAL"],
-  ["TECHM", "Tech Mahindra", 1588, "IT"],
-  ["TRENT", "Trent", 5488, "FMCG"],
-  ["HINDALCO", "Hindalco", 698, "METAL"],
-  ["CIPLA", "Cipla", 1544, "PHARMA"],
-  ["TATAPV", "Tata Motors PV", 318, "AUTO"],
-  ["TATACV", "Tata Motors CV", 467, "AUTO"],
-  ["BAJAJ-AUTO", "Bajaj Auto", 9188, "AUTO"],
-  ["EICHERMOT", "Eicher Motors", 5488, "AUTO"],
-  ["DRREDDY", "Dr Reddy's", 1288, "PHARMA"],
-  ["TATACONSUM", "Tata Consumer", 1142, "FMCG"],
-  ["APOLLOHOSP", "Apollo Hospitals", 6988, "PHARMA"],
-  ["SHRIRAMFIN", "Shriram Finance", 668, "FINANCIAL SERVICES"],
-  ["SBILIFE", "SBI Life", 1688, "FINANCIAL SERVICES"],
-  ["HDFCLIFE", "HDFC Life", 748, "FINANCIAL SERVICES"],
-  ["INDIGO", "InterGlobe Aviation", 5620, "SERVICES"],
-  ["MAXHEALTH", "Max Healthcare", 1128, "PHARMA"],
+  ["RELIANCE", "Reliance Industries", 1316.0, 2.8, "ENERGY"],
+  ["HDFCBANK", "HDFC Bank", 726.95, 1.9, "BANKING"],
+  ["BHARTIARTL", "Bharti Airtel", 1946.0, 4.3, "TELECOM"],
+  ["TCS", "Tata Consultancy", 2302.0, 4.0, "IT"],
+  ["ICICIBANK", "ICICI Bank", 1420.0, 8.1, "BANKING"],
+  ["SBIN", "State Bank of India", 1048.7, 0.7, "PSU BANK"],
+  ["INFY", "Infosys", 1121.0, -9.0, "IT"],
+  ["BAJFINANCE", "Bajaj Finance", 1095.0, 0.0, "FINANCIAL SERVICES"],
+  ["HINDUNILVR", "Hindustan Unilever", 2015.0, -13.0, "FMCG"],
+  ["ITC", "ITC", 269.4, -2.25, "FMCG"],
+  ["LT", "Larsen & Toubro", 4093.0, 12.0, "INFRA"],
+  ["MARUTI", "Maruti Suzuki", 13565.0, -244.0, "AUTO"],
+  ["AXISBANK", "Axis Bank", 1245.8, -5.2, "BANKING"],
+  ["KOTAKBANK", "Kotak Mahindra Bank", 402.8, 5.45, "BANKING"],
+  ["SUNPHARMA", "Sun Pharma", 1902.4, -1.6, "PHARMA"],
+  ["HCLTECH", "HCL Technologies", 1302.5, -15.9, "IT"],
+  ["M&M", "Mahindra & Mahindra", 3412.2, -12.6, "AUTO"],
+  ["ETERNAL", "Eternal", 328.0, 0.05, "SERVICES"],
+  ["TITAN", "Titan Company", 5086.1, 18.1, "FMCG"],
+  ["ULTRACEMCO", "UltraTech Cement", 11570.0, -5.0, "METAL"],
+  ["NTPC", "NTPC", 340.0, 2.5, "ENERGY"],
+  ["BAJAJFINSV", "Bajaj Finserv", 2032.5, 16.5, "FINANCIAL SERVICES"],
+  ["ADANIENT", "Adani Enterprises", 2997.0, 2.1, "ENERGY"],
+  ["ONGC", "ONGC", 236.4, -2.1, "ENERGY"],
+  ["POWERGRID", "Power Grid", 272.4, 7.6, "ENERGY"],
+  ["WIPRO", "Wipro", 180.79, -0.21, "IT"],
+  ["ASIANPAINT", "Asian Paints", 2640.0, 14.8, "FMCG"],
+  ["ADANIPORTS", "Adani Ports", 1700.0, 4.0, "INFRA"],
+  ["COALINDIA", "Coal India", 405.2, 2.7, "ENERGY"],
+  ["JSWSTEEL", "JSW Steel", 1293.7, -6.0, "METAL"],
+  ["TATASTEEL", "Tata Steel", 183.0, -0.5, "METAL"],
+  ["NESTLEIND", "Nestle India", 1477.1, 19.1, "FMCG"],
+  ["BEL", "Bharat Electronics", 414.0, 4.6, "PSU"],
+  ["JIOFIN", "Jio Financial Services", 244.0, -0.6, "FINANCIAL SERVICES"],
+  ["GRASIM", "Grasim Industries", 3308.0, 8.0, "METAL"],
+  ["TECHM", "Tech Mahindra", 1584.0, -8.1, "IT"],
+  ["TRENT", "Trent", 2924.0, -46.0, "FMCG"],
+  ["HINDALCO", "Hindalco", 1034.0, 4.15, "METAL"],
+  ["CIPLA", "Cipla", 1432.2, -5.8, "PHARMA"],
+  ["TATAPV", "Tata Motors PV", 317.9, -2.35, "AUTO"],
+  ["BAJAJ-AUTO", "Bajaj Auto", 11700.0, -93.0, "AUTO"],
+  ["EICHERMOT", "Eicher Motors", 8010.0, -32.0, "AUTO"],
+  ["DRREDDY", "Dr Reddy's", 1174.7, -5.3, "PHARMA"],
+  ["TATACONSUM", "Tata Consumer", 1049.0, -7.3, "FMCG"],
+  ["APOLLOHOSP", "Apollo Hospitals", 8693.0, -42.0, "PHARMA"],
+  ["SHRIRAMFIN", "Shriram Finance", 1130.0, 1.8, "FINANCIAL SERVICES"],
+  ["SBILIFE", "SBI Life", 1792.9, 10.9, "FINANCIAL SERVICES"],
+  ["HDFCLIFE", "HDFC Life", 554.8, 12.8, "FINANCIAL SERVICES"],
+  ["INDIGO", "InterGlobe Aviation", 5110.0, -55.0, "SERVICES"],
+  ["MAXHEALTH", "Max Healthcare", 1000.0, 2.1, "PHARMA"],
 ];
 
 const EXTRA_FNO = [
-  ["HEROMOTOCO", "Hero MotoCorp", 4988, "AUTO"],
-  ["INDUSINDBK", "IndusInd Bank", 1022, "BANKING"],
-  ["BPCL", "BPCL", 318, "ENERGY"],
-  ["DIVISLAB", "Divi's Labs", 4988, "PHARMA"],
-  ["BANKBARODA", "Bank of Baroda", 248, "PSU BANK"],
-  ["PNB", "Punjab National Bank", 108, "PSU BANK"],
-  ["CANBK", "Canara Bank", 112, "PSU BANK"],
-  ["DLF", "DLF", 848, "REALTY"],
-  ["GODREJPROP", "Godrej Properties", 2288, "REALTY"],
-  ["OBEROIRLTY", "Oberoi Realty", 1788, "REALTY"],
-  ["LODHA", "Macrotech Developers", 1288, "REALTY"],
-  ["IRFC", "IRFC", 148, "PSU"],
-  ["RECLTD", "REC", 498, "FINANCIAL SERVICES"],
-  ["PFC", "Power Finance", 468, "FINANCIAL SERVICES"],
-  ["VEDL", "Vedanta", 468, "METAL"],
-  ["HINDZINC", "Hindustan Zinc", 498, "METAL"],
-  ["NMDC", "NMDC", 78, "METAL"],
-  ["IOC", "Indian Oil", 148, "ENERGY"],
-  ["GAIL", "GAIL", 198, "ENERGY"],
-  ["TVSMOTOR", "TVS Motor", 2688, "AUTO"],
-  ["ASHOKLEY", "Ashok Leyland", 232, "AUTO"],
-  ["MOTHERSON", "Samvardhana Motherson", 148, "AUTO"],
-  ["PERSISTENT", "Persistent Systems", 5988, "IT"],
-  ["COFORGE", "Coforge", 7888, "IT"],
-  ["LUPIN", "Lupin", 1988, "PHARMA"],
-  ["AUROPHARMA", "Aurobindo Pharma", 1288, "PHARMA"],
-  ["DABUR", "Dabur", 548, "FMCG"],
-  ["GODREJCP", "Godrej Consumer", 1188, "FMCG"],
-  ["PIDILITIND", "Pidilite", 2988, "FMCG"],
-  ["HAVELLS", "Havells", 1688, "FMCG"],
-  ["SIEMENS", "Siemens", 5488, "INFRA"],
-  ["ABB", "ABB India", 7988, "INFRA"],
+  ["TATACV", "Tata Motors CV", 472.55, 477.6, "AUTO"],
+  ["HEROMOTOCO", "Hero MotoCorp", 5735.0, 5745.0, "AUTO"],
+  ["INDUSINDBK", "IndusInd Bank", 1005.6, 1010.6, "BANKING"],
+  ["BPCL", "BPCL", 311.0, 316.65, "ENERGY"],
+  ["DIVISLAB", "Divi's Labs", 8597.0, 8481.5, "PHARMA"],
+  ["BANKBARODA", "Bank of Baroda", 247.0, 246.55, "PSU BANK"],
+  ["PNB", "Punjab National Bank", 116.55, 117.32, "PSU BANK"],
+  ["CANBK", "Canara Bank", 129.96, 131.1, "PSU BANK"],
+  ["DLF", "DLF", 678.1, 671.0, "REALTY"],
+  ["GODREJPROP", "Godrej Properties", 2035.0, 2054.0, "REALTY"],
+  ["OBEROIRLTY", "Oberoi Realty", 1886.0, 1931.0, "REALTY"],
+  ["LODHA", "Macrotech Developers", 1242.0, 1254.0, "REALTY"],
+  ["IRFC", "IRFC", 86.4, 87.05, "PSU"],
+  ["RECLTD", "REC", 326.65, 340.0, "FINANCIAL SERVICES"],
+  ["PFC", "Power Finance", 363.0, 374.4, "FINANCIAL SERVICES"],
+  ["VEDL", "Vedanta", 279.0, 269.7, "METAL"],
+  ["HINDZINC", "Hindustan Zinc", 594.9, 567.5, "METAL"],
+  ["NMDC", "NMDC", 84.61, 85.5, "METAL"],
+  ["IOC", "Indian Oil", 135.9, 138.61, "ENERGY"],
+  ["GAIL", "GAIL", 172.0, 172.1, "ENERGY"],
+  ["TVSMOTOR", "TVS Motor", 4390.0, 4385.9, "AUTO"],
+  ["ASHOKLEY", "Ashok Leyland", 173.0, 177.1, "AUTO"],
+  ["MOTHERSON", "Samvardhana Motherson", 169.38, 168.06, "AUTO"],
+  ["PERSISTENT", "Persistent Systems", 5667.5, 5570.0, "IT"],
+  ["COFORGE", "Coforge", 1891.7, 1806.0, "IT"],
+  ["LUPIN", "Lupin", 2201.8, 2259.0, "PHARMA"],
+  ["AUROPHARMA", "Aurobindo Pharma", 1621.3, 1627.2, "PHARMA"],
+  ["DABUR", "Dabur", 400.5, 406.8, "FMCG"],
+  ["GODREJCP", "Godrej Consumer", 933.0, 928.0, "FMCG"],
+  ["PIDILITIND", "Pidilite", 1649.0, 1669.0, "FMCG"],
+  ["HAVELLS", "Havells", 1268.0, 1299.0, "FMCG"],
+  ["SIEMENS", "Siemens", 3920.0, 3943.0, "INFRA"],
+  ["ABB", "ABB India", 7424.0, 7660.0, "INFRA"],
 ];
 
 const EXTRA_500 = [
-  ["PAYTM", "One97 Communications", 812, "FINANCIAL SERVICES"],
-  ["POLYCAB", "Polycab", 5988, "INFRA"],
-  ["DIXON", "Dixon Technologies", 12880, "IT"],
-  ["KALYANKJIL", "Kalyan Jewellers", 548, "FMCG"],
-  ["FEDERALBNK", "Federal Bank", 198, "BANKING"],
-  ["IDFCFIRSTB", "IDFC First Bank", 72, "BANKING"],
-  ["BANDHANBNK", "Bandhan Bank", 178, "BANKING"],
-  ["YESBANK", "Yes Bank", 22, "BANKING"],
-  ["IRCTC", "IRCTC", 812, "SERVICES"],
-  ["POLICYBZR", "PB Fintech", 1688, "FINANCIAL SERVICES"],
-  ["NAUKRI", "Info Edge", 6988, "IT"],
-  ["MCX", "MCX", 5488, "FINANCIAL SERVICES"],
+  ["PAYTM", "One97 Communications", 1632.0, 1580.2, "FINANCIAL SERVICES"],
+  ["POLYCAB", "Polycab", 8966.0, 9370.0, "INFRA"],
+  ["DIXON", "Dixon Technologies", 14850.0, 14025.0, "IT"],
+  ["KALYANKJIL", "Kalyan Jewellers", 603.55, 610.0, "FMCG"],
+  ["FEDERALBNK", "Federal Bank", 361.0, 354.1, "BANKING"],
+  ["IDFCFIRSTB", "IDFC First Bank", 86.75, 85.05, "BANKING"],
+  ["BANDHANBNK", "Bandhan Bank", 164.8, 166.2, "BANKING"],
+  ["YESBANK", "Yes Bank", 22.8, 22.92, "BANKING"],
+  ["IRCTC", "IRCTC", 484.2, 499.95, "SERVICES"],
+  ["POLICYBZR", "PB Fintech", 1795.2, 1728.1, "FINANCIAL SERVICES"],
+  ["NAUKRI", "Info Edge", 1350.1, 1355.8, "IT"],
+  ["MCX", "MCX", 3185.0, 2933.1, "FINANCIAL SERVICES"],
+];
+
+const INDICES = [
+  ["NIFTY", "Nifty 50", 24252.0, 24231.85],
+  ["BANKNIFTY", "Bank Nifty", 57761.95, 57495.9],
+  ["SENSEX", "Sensex", 77540.83, 77537.72],
+  ["FINNIFTY", "FinNifty", 26261.0, 26203.9],
+  ["INDIAVIX", "India VIX", 11.2, 10.76],
 ];
 
 const SECTORS = [
@@ -207,7 +215,16 @@ function generateBars(symbol, base, bias, n = 160) {
     bars.push({ t: t0 + i * 5 * 60 * 1000, o, h, l, c, v });
     px = c;
   }
-  return bars;
+  const last = bars[bars.length - 1].c || base;
+  const scale = base / last;
+  return bars.map((b, i) => {
+    const o = +(b.o * scale).toFixed(2);
+    const h = +(b.h * scale).toFixed(2);
+    const l = +(b.l * scale).toFixed(2);
+    let c = +(b.c * scale).toFixed(2);
+    if (i === bars.length - 1) c = +base.toFixed(2);
+    return { ...b, o, h: Math.max(h, o, c), l: Math.min(l, o, c), c };
+  });
 }
 
 function tickBar(bar, bias, rand) {
@@ -235,14 +252,23 @@ let liveMode = false;
 
 function catalog() {
   const rows = [];
-  for (const [sym, name, px, sector, n50] of NIFTY50) {
-    rows.push({ symbol: sym, name, base: px, sector, nifty50: true, fno: true, nifty500: true });
+  for (const [sym, name, close, chg, sector] of NIFTY50) {
+    rows.push({
+      symbol: sym,
+      name,
+      base: close,
+      prevClose: +(close - chg).toFixed(2),
+      sector,
+      nifty50: true,
+      fno: true,
+      nifty500: true,
+    });
   }
-  for (const [sym, name, px, sector] of EXTRA_FNO) {
-    rows.push({ symbol: sym, name, base: px, sector, nifty50: false, fno: true, nifty500: true });
+  for (const [sym, name, close, prev, sector] of EXTRA_FNO) {
+    rows.push({ symbol: sym, name, base: close, prevClose: prev, sector, nifty50: false, fno: true, nifty500: true });
   }
-  for (const [sym, name, px, sector] of EXTRA_500) {
-    rows.push({ symbol: sym, name, base: px, sector, nifty50: false, fno: false, nifty500: true });
+  for (const [sym, name, close, prev, sector] of EXTRA_500) {
+    rows.push({ symbol: sym, name, base: close, prevClose: prev, sector, nifty50: false, fno: false, nifty500: true });
   }
   return rows;
 }
@@ -351,10 +377,20 @@ function indexFromMean() {
   return null;
 }
 
-function buildIndex(symbol, name, base, members, sector = "INDEX") {
-  const bars = generateBars(symbol, base, members.filter((m) => m.ta.align.bias === "BULL").length > members.length / 2 ? "bull" : "chop");
-  const row = { symbol, name, base, sector, nifty50: false, fno: true, nifty500: false, bars, prevClose: base * 0.997, isIndex: true };
-  return enrich(row);
+function buildIndex(symbol, name, close, prevClose) {
+  const bars = generateBars(symbol, close, "chop");
+  return enrich({
+    symbol,
+    name,
+    base: close,
+    sector: "INDEX",
+    nifty50: false,
+    fno: true,
+    nifty500: false,
+    bars,
+    prevClose,
+    isIndex: true,
+  });
 }
 
 function sectorCards(rows) {
@@ -409,32 +445,13 @@ function seed() {
   for (const meta of catalog()) {
     const bias = biasFor(meta.symbol);
     const bars = generateBars(meta.symbol, meta.base, bias);
-    const prevClose = bars[Math.max(0, bars.length - 76)]?.c || meta.base;
-    universe.set(meta.symbol, { ...meta, bars, prevClose, bias });
+    universe.set(meta.symbol, { ...meta, bars, bias });
   }
   const tmp = [...universe.values()].map((r) => enrich(r));
   for (const r of tmp) universe.set(r.symbol, r);
-  const n50 = tmp.filter((r) => r.nifty50);
-  universe.set("NIFTY", buildIndex("NIFTY", "Nifty 50", 24785, n50));
-  universe.set("BANKNIFTY", buildIndex("BANKNIFTY", "Bank Nifty", 52140, n50.filter((r) => r.sector === "BANKING" || r.sector === "PSU BANK")));
-  universe.set("SENSEX", buildIndex("SENSEX", "Sensex", 81120, n50));
-  universe.set("FINNIFTY", buildIndex("FINNIFTY", "FinNifty", 23880, n50.filter((r) => r.sector === "FINANCIAL SERVICES" || r.sector === "BANKING")));
-  const vixBars = generateBars("INDIAVIX", 12.8, "chop", 160);
-  universe.set(
-    "INDIAVIX",
-    enrich({
-      symbol: "INDIAVIX",
-      name: "India VIX",
-      base: 12.8,
-      sector: "INDEX",
-      bars: vixBars,
-      prevClose: 13.1,
-      isIndex: true,
-      nifty50: false,
-      fno: false,
-      nifty500: false,
-    }),
-  );
+  for (const [sym, name, close, prev] of INDICES) {
+    universe.set(sym, buildIndex(sym, name, close, prev));
+  }
   regime = computeRegime([...universe.values()]);
   for (const [k, v] of universe) universe.set(k, enrich(v));
   regime = computeRegime([...universe.values()]);
