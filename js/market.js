@@ -216,7 +216,7 @@ const GLOBAL_INDICES = [
   ["CAC40", "CAC 40", "France", 8484.43, 8453.09, "€", { tz: "Europe/Paris", open: 9 * 60, close: 17 * 60 + 30 }],
   ["DAX", "DAX", "Germany", 26136.56, 25983.04, "€", { tz: "Europe/Berlin", open: 9 * 60, close: 17 * 60 + 30 }],
   ["NIKKEI", "Nikkei 225", "Japan", 66016.36, 66216.79, "¥", { tz: "Asia/Tokyo", open: 9 * 60, close: 15 * 60, lunch: [11 * 60 + 30, 12 * 60 + 30] }],
-  ["HANGSENG", "Hang Seng", "China", 26009.46, 25698.49, "HK$", { tz: "Asia/Hong_Kong", open: 9 * 60 + 30, close: 16 * 60, lunch: [12 * 60, 13 * 60] }],
+  ["HANGSENG", "Hang Seng", "Hong Kong", 26009.46, 25698.49, "HK$", { tz: "Asia/Hong_Kong", open: 9 * 60 + 30, close: 16 * 60, lunch: [12 * 60, 13 * 60] }],
   ["TAIWAN", "Taiwan Index", "Taiwan", 45224.29, 44933.74, "NT$", { tz: "Asia/Taipei", open: 9 * 60, close: 13 * 60 + 30 }],
   ["ASX200", "ASX 200", "Australia", 9058.9, 9083.8, "A$", { tz: "Australia/Sydney", open: 10 * 60, close: 16 * 60 }],
 ];
