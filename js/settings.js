@@ -7,10 +7,11 @@ import { isFyersConnected, defaultRedirectUri, hasFyersProxy } from "./fyers.js"
 import { Alerts } from "./alerts.js";
 
 function esc(v) {
+  const amp = "\u0026";
   return String(v ?? "")
-    .replace(/&/g, "&")
-    .replace(/"/g, """)
-    .replace(/</g, "<");
+    .replace(/&/g, amp + "amp;")
+    .replace(/"/g, amp + "quot;")
+    .replace(/</g, amp + "lt;");
 }
 
 function field(label, name, value, type = "text", extra = "") {
