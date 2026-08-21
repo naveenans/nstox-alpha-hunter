@@ -1,0 +1,44 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  margin-bottom: var(--space-4);
+  align-items: end;
+}
+.filters label { font-size: 0.72rem; color: var(--fg-muted); letter-spacing: 0.06em; }
+.filters select, .filters input[type="number"] { min-height: 40px; }
+.scan-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.scan-meta { color: var(--fg-subtle); font-size: var(--text-xs); margin: 0 0 12px; }
+.yn { font-size: 0.68rem; letter-spacing: 0.08em; }
+.yn.yes { color: var(--buy); }
+.yn.no { color: var(--fg-subtle); }
+.scan-cards {
+  display: grid;
+  gap: 10px;
+}
+.scan-card {
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+}
+.scan-card header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.scan-card.is-buy { box-shadow: inset 3px 0 0 var(--buy); }
+.scan-card.is-sell { box-shadow: inset 3px 0 0 var(--sell); }
+.scan-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.scan-card-grid span {
+  display: block;
+  color: var(--fg-subtle);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

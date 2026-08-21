@@ -1,0 +1,62 @@
+.topbar-logo { display: none; }
+
+@media (max-width: 1100px) {
+  .idx-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sector-row { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
+  .flow-grid { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 860px) {
+  html, body { overflow-x: hidden; }
+  #app { grid-template-columns: minmax(0, 1fr); overflow-x: hidden; }
+  .sidebar { display: none; }
+  .stage { min-width: 0; max-width: 100%; }
+  .topbar {
+    position: sticky;
+    padding: 12px 14px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .topbar .brand-line { font-size: 0.95rem; letter-spacing: 0.1em; }
+  .topbar-brand { display: flex; gap: 10px; align-items: center; min-width: 0; }
+  .topbar-logo { display: block; width: 36px; height: 36px; border-radius: 50%; }
+  .tag { display: none; }
+  .page { padding: 16px 14px 96px; min-width: 0; overflow-x: hidden; }
+  .disclaimer { padding: 12px 14px 96px; }
+  .desktop-only { display: none !important; }
+  .mobile-only { display: grid; }
+  .bottom-nav {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: #0b0b0b;
+    border-top: 1px solid var(--border);
+    z-index: 40;
+    padding: 6px 4px calc(8px + env(safe-area-inset-bottom));
+  }
+  .bottom-nav a {
+    text-align: center;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-subtle);
+    padding: 10px 4px;
+    min-height: 44px;
+  }
+  .bottom-nav a.active { color: var(--gold-hi); }
+  .status-pills { justify-content: flex-start; width: 100%; }
+  .levels-hero, .opt-hero, .hero-regime { flex-direction: column; align-items: flex-start; }
+  .page-head { flex-direction: column; align-items: flex-start; }
+  #toast-root { left: 12px; right: 12px; bottom: 72px; }
+  .idx-row, .setup-row, .sector-row, .flow-grid { grid-template-columns: minmax(0, 1fr); }
+  .idx-card, .setup-card, .card, .sector-card { min-width: 0; max-width: 100%; }
+  .big-price { font-size: 1.28rem; word-break: break-word; }
+}
+
+@media (max-width: 420px) {
+  .scan-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  h1 { font-size: 1.7rem; }
+  .regime-label { font-size: 2rem; }
+}
