@@ -8,6 +8,7 @@ import { Options } from "./options.js";
 import { Levels } from "./levels.js";
 import { Settings } from "./settings.js";
 import { Alerts } from "./alerts.js";
+import { Paper } from "./paper.js";
 import { isFyersConnected } from "./fyers.js";
 import { WS } from "./websocket.js";
 import { Auth } from "./auth.js";
@@ -21,6 +22,7 @@ const NAV = [
   { href: "options.html", id: "options", label: "Options Finder" },
   { href: "levels.html", id: "levels", label: "Intraday Levels" },
   { href: "watchlist.html", id: "watchlist", label: "Watchlist" },
+  { href: "paper.html", id: "paper", label: "Paper Trading" },
   { href: "settings.html", id: "settings", label: "Settings" },
   { href: "about.html", id: "about", label: "About" },
 ];
@@ -198,6 +200,7 @@ function renderShell() {
     <nav class="bottom-nav">
       <a href="index.html" class="${page === "index" || page === "dashboard" ? "active" : ""}">Home</a>
       <a href="scanner.html" class="${page === "scanner" ? "active" : ""}">Scanner</a>
+      <a href="paper.html" class="${page === "paper" ? "active" : ""}">Paper</a>
       <a href="watchlist.html" class="${page === "watchlist" ? "active" : ""}">Watch</a>
       <a href="options.html" class="${page === "options" ? "active" : ""}">Options</a>
       <a href="settings.html" class="${page === "settings" ? "active" : ""}">Settings</a>
@@ -612,9 +615,15 @@ function openDetail(sym) {
         <ul class="why">${row.reasons.map((r) => `<li>${r}</li>`).join("") || "<li>Insufficient confluence</li>"}</ul>
         <h3>Risks</h3>
         <ul class="risks">${row.risks.map((r) => `<li>${r}</li>`).join("") || "<li>Standard market risk</li>"}</ul>
+        <div class="row-gap" style="margin-top:16px">
+          <button class="btn gold" id="modal-paper">Paper trade</button>
+        </div>
       </div>
     </div>`;
   host.querySelector("#modal-x").onclick = closeDetail;
+  host.querySelector("#modal-paper").onclick = () => {
+    Paper.takeFromRow(row, "hunter");
+  };
   host.querySelector("#modal-bg").addEventListener("click", (e) => {
     if (e.target.id === "modal-bg") closeDetail();
   });
@@ -655,6 +664,9 @@ function renderPage() {
       break;
     case "watchlist":
       renderWatchlist(root);
+      break;
+    case "paper":
+      Paper.render(root);
       break;
     case "settings":
       Settings.render(root);

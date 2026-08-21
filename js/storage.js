@@ -9,6 +9,7 @@ const KEYS = {
   scanner: "nstox_scanner_settings",
   ui: "nstox_ui",
   alerts: "nstox_alerts_log",
+  paper: "nstox_paper",
 };
 
 export const DEFAULT_SETTINGS = {
@@ -92,6 +93,15 @@ export const DEFAULT_SETTINGS = {
   },
 };
 
+export const DEFAULT_PAPER = {
+  capital: 500000,
+  cash: 500000,
+  riskPct: 1,
+  maxOpen: 5,
+  open: [],
+  closed: [],
+};
+
 export const DEFAULT_WATCHLISTS = [
   { id: "momentum", name: "Momentum", symbols: ["RELIANCE", "SBIN", "TATAPV", "TATACV", "HINDALCO", "BEL"] },
   { id: "breakout", name: "Breakout", symbols: ["TRENT", "BAJFINANCE", "ADANIENT", "BEL", "POWERGRID"] },
@@ -167,6 +177,17 @@ export const Storage = {
     write(KEYS.watchlist, lists);
     window.dispatchEvent(new CustomEvent("nstox:watchlist", { detail: lists }));
   },
+  getPaper() {
+    return deepMerge(DEFAULT_PAPER, read(KEYS.paper, {}));
+  },
+  setPaper(book) {
+    if (!book) {
+      localStorage.removeItem(KEYS.paper);
+      return structuredClone(DEFAULT_PAPER);
+    }
+    write(KEYS.paper, book);
+    return book;
+  },
   getScanner() {
     return this.getSettings().scanner;
   },
@@ -187,12 +208,14 @@ export const Storage = {
       exportedAt: new Date().toISOString(),
       settings,
       watchlists: this.getWatchlists(),
+      paper: this.getPaper(),
     };
   },
   importAll(payload) {
     if (!payload || typeof payload !== "object") throw new Error("Invalid settings file");
     if (payload.settings) this.setSettings(deepMerge(DEFAULT_SETTINGS, payload.settings));
     if (payload.watchlists) this.setWatchlists(payload.watchlists);
+    if (payload.paper) this.setPaper(deepMerge(DEFAULT_PAPER, payload.paper));
   },
   resetAll() {
     localStorage.removeItem(KEYS.settings);
@@ -200,6 +223,7 @@ export const Storage = {
     localStorage.removeItem(KEYS.scanner);
     localStorage.removeItem(KEYS.fyers);
     localStorage.removeItem(KEYS.ui);
+    localStorage.removeItem(KEYS.paper);
     window.dispatchEvent(new CustomEvent("nstox:settings", { detail: this.getSettings() }));
     window.dispatchEvent(new CustomEvent("nstox:watchlist", { detail: this.getWatchlists() }));
   },

@@ -253,3 +253,11 @@
 .lvl-cell.sup { border-color: rgba(61, 186, 126, 0.35); }
 .lvl-cell.mid { border-color: rgba(201, 162, 39, 0.4); }
 .lvl-cell.now { box-shadow: 0 0 0 1px var(--gold); }
+.idx-row.paper-stats { grid-template-columns: repeat(4, 1fr); }
+.idx-row.strat-row { grid-template-columns: repeat(4, 1fr); }
+.strat-card { cursor: pointer; }
+.strat-card.on { border-color: var(--border-strong); box-shadow: inset 0 0 0 1px var(--gold-dim); }
+.why-line { font-size: 0.78rem; color: var(--fg-muted); margin: 4px 0; }
+.why-line b { color: var(--gold-hi); margin-right: 6px; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.page-head.tight { margin-top: var(--space-4); }
+.page-head.tight h2 { margin: 0; font-size: 1.2rem; }
