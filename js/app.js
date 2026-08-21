@@ -523,6 +523,9 @@ function renderPage() {
     case "settings":
       Settings.render(root);
       break;
+    case "callback":
+      root.innerHTML = `<section class="card callback-card"><p class="kicker">FYERS</p><h1>Completing login</h1><p class="muted">Fetching access token automatically…</p></section>`;
+      break;
     case "about":
       renderAbout(root);
       break;
@@ -535,7 +538,7 @@ function boot() {
   const settings = Storage.getSettings();
   document.body.classList.toggle("compact", settings.ui.compact);
   document.body.classList.toggle("no-anim", !settings.ui.animations);
-  Auth.captureRedirectToken();
+  Auth.finishOAuth();
   Market.init();
   renderShell();
   renderPage();

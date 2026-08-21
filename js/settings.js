@@ -1,19 +1,28 @@
 /**
- * Settings page — FYERS, scanner, technicals, structure, options, alerts, UI.
+ * Settings page — FYERS OAuth, scanner, technicals, structure, options, alerts, UI.
  */
 import { Storage, DEFAULT_SETTINGS } from "./storage.js";
 import { Auth } from "./auth.js";
-import { isFyersConnected, getFyersState } from "./fyers.js";
+import { isFyersConnected, defaultRedirectUri, hasFyersProxy } from "./fyers.js";
 import { Alerts } from "./alerts.js";
 
-function field(label, name, value, type = "text", extra = "") {
-  return `<label class="field"><span>${label}</span><input name="${name}" type="${type}" value="${value ?? ""}" ${extra}/></label>`;
+function esc(v) {
+  return String(v ?? "")
+    .replace(/&/g, "&")
+    .replace(/"/g, """)
+    .replace(/</g, "<");
 }
 
-export function renderSettings(root) {
+function field(label, name, value, type = "text", extra = "") {
+  return `<label class="field"><span>${label}</span><input name="${name}" type="${type}" value="${esc(value)}" ${extra}/></label>`;
+}
+
+export async function renderSettings(root) {
   const s = Storage.getSettings();
   const fy = s.fyers;
   const live = isFyersConnected();
+  const redirect = fy.redirectUri || defaultRedirectUri();
+  const proxy = await hasFyersProxy();
   root.innerHTML = `
     <div class="page-head">
       <div>
@@ -21,15 +30,27 @@ export function renderSettings(root) {
         <h1>Settings</h1>
       </div>
     </div>
-    <p class="warn-banner">Do not use this static version on shared/public computers with sensitive tokens. The FYERS secret ID is never stored. OAuth token exchange requires a secure backend. Use the manually supplied access-token mode for this static HTML version.</p>
+    <p class="warn-banner">Enter App ID and Secret ID from the FYERS API dashboard. Copy the Redirect URI into your FYERS app (exact match). Login with FYERS fetches the access token automatically. Secret ID stays on this device — do not use a shared computer.</p>
 
     <section class="card">
       <header class="card-h">FYERS API connection</header>
+      <ol class="prose oauth-steps">
+        <li>Create an app at <a href="https://myapi.fyers.in/dashboard/" target="_blank" rel="noopener">myapi.fyers.in</a></li>
+        <li>Paste the Redirect URI below into that app and save</li>
+        <li>Enter App ID and Secret ID here</li>
+        <li>Click <b>Login with FYERS</b> — access token is fetched automatically</li>
+      </ol>
       <form id="fyers-form" class="form-grid" autocomplete="off">
-        ${field("App ID", "appId", fy.appId)}
-        ${field("Redirect URI", "redirectUri", fy.redirectUri, "url")}
-        ${field("Access Token", "accessToken", fy.accessToken, "password", 'autocomplete="off"')}
-        ${field("Client ID", "clientId", fy.clientId)}
+        ${field("App ID", "appId", fy.appId, "text", 'autocomplete="off" required')}
+        ${field("Secret ID", "secretId", fy.secretId, "password", 'autocomplete="new-password" required')}
+        <label class="field span-2"><span>Redirect URI · register this exact URL on FYERS</span>
+          <span class="add-row">
+            <input name="redirectUri" type="url" value="${esc(redirect)}"/>
+            <button type="button" class="btn sm" id="copy-redir">Copy</button>
+          </span>
+        </label>
+        ${field("FYERS PIN (optional, for auto-refresh)", "pin", fy.pin, "password", 'autocomplete="off" inputmode="numeric"')}
+        ${field("Access Token (auto-filled after login)", "accessToken", fy.accessToken, "password", 'autocomplete="off"')}
         <label class="field"><span>Environment</span>
           <select name="environment">
             <option value="live" ${fy.environment === "live" ? "selected" : ""}>Live</option>
@@ -45,7 +66,7 @@ export function renderSettings(root) {
           <button type="submit" class="btn ghost">Save</button>
         </div>
       </form>
-      <p class="status-line">FYERS status · <b class="${live ? "pos" : "neg"}">${live ? "CONNECTED" : "DISCONNECTED"}</b> · ${live ? "LIVE MODE" : "DEMO MODE"}</p>
+      <p class="status-line">FYERS status · <b class="${live ? "pos" : "neg"}">${live ? "CONNECTED" : "DISCONNECTED"}</b> · ${live ? "LIVE MODE" : "DEMO MODE"} · ${proxy ? "OAuth proxy ready" : "No OAuth proxy — login may fail on a static host"}</p>
     </section>
 
     <section class="card">
@@ -166,7 +187,19 @@ export function renderSettings(root) {
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     Auth.saveFromForm(form);
+    Alerts.toast("Saved on this device only", "info");
   });
+  root.querySelector("#copy-redir").onclick = async () => {
+    const v = form.redirectUri.value.trim() || defaultRedirectUri();
+    form.redirectUri.value = v;
+    try {
+      await navigator.clipboard.writeText(v);
+      Alerts.toast("Redirect URI copied", "buy");
+    } catch {
+      form.redirectUri.select();
+      Alerts.toast("Copy the Redirect URI from the field", "info");
+    }
+  };
   root.querySelector("#fy-login").onclick = () => {
     Auth.saveFromForm(form);
     Auth.loginWithFyers();

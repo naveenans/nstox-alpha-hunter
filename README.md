@@ -55,24 +55,32 @@ Settings → **FYERS API connection**
 | Field | Notes |
 | --- | --- |
 | App ID | From [FYERS API dashboard](https://myapi.fyers.in/dashboard/) |
-| Redirect URI | Must match the app registration exactly |
-| Access Token | Paste the token you generate outside this page |
-| Client ID | Optional display / notes field |
+| Secret ID | From the same FYERS app. Stored on this device only. Never committed. |
+| Redirect URI | Copy the value shown in Settings into the FYERS app (exact match). Default is `callback.html` on this origin. |
+| PIN | Optional 4-digit FYERS PIN — used only to auto-refresh the daily access token |
+| Access Token | Filled automatically after Login with FYERS |
 | Environment | Live or sandbox |
+
+### Login flow (automatic token)
+
+1. Create an API app at [myapi.fyers.in](https://myapi.fyers.in/dashboard/).
+2. Copy **Redirect URI** from Hunter Settings into that FYERS app.
+3. Enter **App ID** and **Secret ID**.
+4. Click **Login with FYERS**.
+5. After you approve access, Hunter exchanges the auth code (`SHA-256(appId:secretId)`) and **saves the access token automatically**.
 
 Buttons: Login with FYERS · Connect · Disconnect · Test connection · Refresh data · Save / Clear / Reset
 
-### OAuth limitation (static HTML)
+### OAuth and live quotes
 
-FYERS token exchange uses `SHA-256(appId + appSecret)` on `https://api-t1.fyers.in/api/v3/validate-authcode`.
+Token exchange and market data go through Hunter’s same-origin proxy (`/api/fyers/*`) so the browser is not blocked by FYERS CORS.
 
-**This static app never stores or embeds the FYERS secret.**
+- **This live preview** includes the proxy — OAuth should complete here.
+- **GitHub Pages is static** — the browser cannot talk to FYERS directly. Use this preview for live login, or serve the folder with `server.py`.
 
-> OAuth token exchange requires a secure backend. Use the manually supplied access-token mode for this static HTML version.
+The FYERS secret is sent only to Hunter’s proxy to build `appIdHash`. It is not logged and not written to the repo.
 
-Browser **CORS** will often block FYERS REST/WebSocket calls from GitHub Pages. When that happens, Hunter stays in **DEMO MODE** and shows a clean error (TOKEN EXPIRED, CORS, RATE LIMIT) — never a secret.
-
-Do **not** use this static version on a shared/public computer with a live token.
+Do **not** use Hunter on a shared/public computer with a live Secret ID or token.
 
 ### Endpoints used (FYERS API v3)
 

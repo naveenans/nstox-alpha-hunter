@@ -1,6 +1,6 @@
 /**
  * LocalStorage layer for NSTOX ALPHA HUNTER.
- * Never persist FYERS app secrets. Tokens are user-supplied and stay on-device.
+ * Tokens and Secret ID stay on-device. Export strips secrets.
  */
 const KEYS = {
   fyers: "nstox_fyers_token",
@@ -14,8 +14,11 @@ const KEYS = {
 export const DEFAULT_SETTINGS = {
   fyers: {
     appId: "",
+    secretId: "",
     redirectUri: "",
     accessToken: "",
+    refreshToken: "",
+    pin: "",
     clientId: "",
     environment: "live",
     connected: false,
@@ -153,6 +156,7 @@ export const Storage = {
   clearToken() {
     const s = this.getSettings();
     s.fyers.accessToken = "";
+    s.fyers.refreshToken = "";
     s.fyers.connected = false;
     this.setSettings(s);
   },
@@ -170,10 +174,18 @@ export const Storage = {
     return this.patchSettings({ scanner });
   },
   exportAll() {
+    const settings = structuredClone(this.getSettings());
+    if (settings.fyers) {
+      settings.fyers.secretId = "";
+      settings.fyers.accessToken = "";
+      settings.fyers.refreshToken = "";
+      settings.fyers.pin = "";
+      settings.fyers.connected = false;
+    }
     return {
       version: 1,
       exportedAt: new Date().toISOString(),
-      settings: this.getSettings(),
+      settings,
       watchlists: this.getWatchlists(),
     };
   },
