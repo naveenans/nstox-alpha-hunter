@@ -162,6 +162,7 @@ function renderCards(host, rows, onOpen) {
 export function renderScanner(root) {
   const s = Storage.getScanner();
   root.innerHTML = `
+    ${Market.isFrozen() ? `<p class="warn-banner">Cash market is closed. Scanner prices are frozen at the previous session.</p>` : ""}
     <div class="page-head">
       <div>
         <p class="kicker">Rule-based confluence</p>

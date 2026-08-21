@@ -166,9 +166,16 @@ function paintStatus() {
     el("pill-scan").innerHTML = `<i class="${Scanner.isRunning() ? "on" : "off"}"></i> SCANNER ${Scanner.isRunning() ? "RUNNING" : "IDLE"}`;
   if (el("pill-clock")) el("pill-clock").textContent = `${ist.clock} IST`;
   if (el("mode-badge")) {
-    el("mode-badge").textContent = demo ? "DEMO MODE" : "LIVE MODE";
-    el("mode-badge").className = `badge ${demo ? "demo" : "live"}`;
+    const frozen = Market.isFrozen();
+    el("mode-badge").textContent = frozen ? "FROZEN · MARKET CLOSED" : demo ? "DEMO MODE" : "LIVE MODE";
+    el("mode-badge").className = `badge ${frozen ? "demo" : demo ? "demo" : "live"}`;
   }
+}
+
+function freezeNote() {
+  if (!Market.isFrozen()) return "";
+  const m = getMarketStatus();
+  return `<p class="warn-banner">Cash market is closed (${m.session}). Prices are frozen at the previous session — tickers will not move until 09:15 IST Monday–Friday.</p>`;
 }
 
 function renderCommand(root) {
@@ -180,6 +187,7 @@ function renderCommand(root) {
   const nifty = snap.indices.find((i) => i.symbol === "NIFTY");
   const rg = snap.regime;
   root.innerHTML = `
+    ${freezeNote()}
     <section class="hero-regime">
       <div>
         <p class="kicker">What are the best intraday setups right now?</p>
@@ -239,6 +247,7 @@ function renderDashboard(root) {
   const fno = rows.filter((r) => r.fno && !r.nifty50).slice(0, 6);
   const rg = snap.regime;
   root.innerHTML = `
+    ${freezeNote()}
     <div class="page-head">
       <div>
         <p class="kicker">Command deck</p>
@@ -309,6 +318,7 @@ function miniTable(rows) {
 function renderUniverse(root, kind, title) {
   const rows = Market.getUniverse(kind).sort((a, b) => b.score - a.score);
   root.innerHTML = `
+    ${freezeNote()}
     <div class="page-head"><div><p class="kicker">Universe</p><h1>${title}</h1></div></div>
     <div class="table-wrap desktop-only">
       <table class="scan-table">

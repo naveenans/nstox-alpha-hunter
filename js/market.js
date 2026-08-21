@@ -9,59 +9,64 @@ import { buildPlan, classicPivots } from "./levels.js";
 import { isFyersConnected, getQuotes } from "./fyers.js";
 
 const NIFTY50 = [
-  ["RELIANCE", "Reliance Industries", 1392, "ENERGY", true],
-  ["TCS", "Tata Consultancy", 4185, "IT", true],
-  ["HDFCBANK", "HDFC Bank", 1678, "BANKING", true],
-  ["BHARTIARTL", "Bharti Airtel", 1642, "TELECOM", true],
-  ["ICICIBANK", "ICICI Bank", 1228, "BANKING", true],
-  ["INFY", "Infosys", 1864, "IT", true],
-  ["SBIN", "State Bank of India", 842, "PSU BANK", true],
-  ["ITC", "ITC", 492, "FMCG", true],
-  ["HINDUNILVR", "Hindustan Unilever", 2488, "FMCG", true],
-  ["LT", "Larsen & Toubro", 3610, "INFRA", true],
-  ["BAJFINANCE", "Bajaj Finance", 912, "FINANCIAL SERVICES", true],
-  ["HCLTECH", "HCL Technologies", 1788, "IT", true],
-  ["AXISBANK", "Axis Bank", 1148, "BANKING", true],
-  ["KOTAKBANK", "Kotak Mahindra Bank", 1865, "BANKING", true],
-  ["MARUTI", "Maruti Suzuki", 12740, "AUTO", true],
-  ["SUNPHARMA", "Sun Pharma", 1722, "PHARMA", true],
-  ["M&M", "Mahindra & Mahindra", 2785, "AUTO", true],
-  ["ULTRACEMCO", "UltraTech Cement", 11890, "METAL", true],
-  ["NTPC", "NTPC", 368, "ENERGY", true],
-  ["TITAN", "Titan Company", 3488, "FMCG", true],
-  ["POWERGRID", "Power Grid", 332, "ENERGY", true],
-  ["WIPRO", "Wipro", 498, "IT", true],
-  ["ASIANPAINT", "Asian Paints", 2482, "FMCG", true],
-  ["ONGC", "ONGC", 268, "ENERGY", true],
-  ["TATAMOTORS", "Tata Motors", 1018, "AUTO", true],
-  ["BAJAJFINSV", "Bajaj Finserv", 1988, "FINANCIAL SERVICES", true],
-  ["ADANIENT", "Adani Enterprises", 3012, "ENERGY", true],
-  ["COALINDIA", "Coal India", 412, "ENERGY", true],
-  ["JSWSTEEL", "JSW Steel", 978, "METAL", true],
-  ["NESTLEIND", "Nestle India", 2388, "FMCG", true],
-  ["TATASTEEL", "Tata Steel", 162, "METAL", true],
-  ["ADANIPORTS", "Adani Ports", 1448, "INFRA", true],
-  ["BEL", "Bharat Electronics", 312, "PSU", true],
-  ["TRENT", "Trent", 5488, "FMCG", true],
-  ["HINDALCO", "Hindalco", 698, "METAL", true],
-  ["GRASIM", "Grasim Industries", 2688, "METAL", true],
-  ["TECHM", "Tech Mahindra", 1588, "IT", true],
-  ["CIPLA", "Cipla", 1544, "PHARMA", true],
-  ["INDUSINDBK", "IndusInd Bank", 1022, "BANKING", true],
-  ["EICHERMOT", "Eicher Motors", 5488, "AUTO", true],
-  ["DRREDDY", "Dr Reddy's", 1288, "PHARMA", true],
-  ["TATACONSUM", "Tata Consumer", 1142, "FMCG", true],
-  ["APOLLOHOSP", "Apollo Hospitals", 6988, "PHARMA", true],
-  ["BPCL", "BPCL", 318, "ENERGY", true],
-  ["HEROMOTOCO", "Hero MotoCorp", 4988, "AUTO", true],
-  ["SHRIRAMFIN", "Shriram Finance", 668, "FINANCIAL SERVICES", true],
-  ["SBILIFE", "SBI Life", 1688, "FINANCIAL SERVICES", true],
-  ["HDFCLIFE", "HDFC Life", 748, "FINANCIAL SERVICES", true],
-  ["DIVISLAB", "Divi's Labs", 4988, "PHARMA", true],
-  ["BAJAJ-AUTO", "Bajaj Auto", 9188, "AUTO", true],
+  ["RELIANCE", "Reliance Industries", 1392, "ENERGY"],
+  ["HDFCBANK", "HDFC Bank", 1678, "BANKING"],
+  ["BHARTIARTL", "Bharti Airtel", 1642, "TELECOM"],
+  ["TCS", "Tata Consultancy", 4185, "IT"],
+  ["ICICIBANK", "ICICI Bank", 1228, "BANKING"],
+  ["SBIN", "State Bank of India", 842, "PSU BANK"],
+  ["INFY", "Infosys", 1864, "IT"],
+  ["BAJFINANCE", "Bajaj Finance", 912, "FINANCIAL SERVICES"],
+  ["HINDUNILVR", "Hindustan Unilever", 2488, "FMCG"],
+  ["ITC", "ITC", 492, "FMCG"],
+  ["LT", "Larsen & Toubro", 3610, "INFRA"],
+  ["MARUTI", "Maruti Suzuki", 12740, "AUTO"],
+  ["AXISBANK", "Axis Bank", 1148, "BANKING"],
+  ["KOTAKBANK", "Kotak Mahindra Bank", 1865, "BANKING"],
+  ["SUNPHARMA", "Sun Pharma", 1722, "PHARMA"],
+  ["HCLTECH", "HCL Technologies", 1788, "IT"],
+  ["M&M", "Mahindra & Mahindra", 2785, "AUTO"],
+  ["ETERNAL", "Eternal", 328, "SERVICES"],
+  ["TITAN", "Titan Company", 3488, "FMCG"],
+  ["ULTRACEMCO", "UltraTech Cement", 11890, "METAL"],
+  ["NTPC", "NTPC", 368, "ENERGY"],
+  ["BAJAJFINSV", "Bajaj Finserv", 1988, "FINANCIAL SERVICES"],
+  ["ADANIENT", "Adani Enterprises", 3012, "ENERGY"],
+  ["ONGC", "ONGC", 268, "ENERGY"],
+  ["POWERGRID", "Power Grid", 332, "ENERGY"],
+  ["WIPRO", "Wipro", 498, "IT"],
+  ["ASIANPAINT", "Asian Paints", 2482, "FMCG"],
+  ["ADANIPORTS", "Adani Ports", 1448, "INFRA"],
+  ["COALINDIA", "Coal India", 412, "ENERGY"],
+  ["JSWSTEEL", "JSW Steel", 978, "METAL"],
+  ["TATASTEEL", "Tata Steel", 162, "METAL"],
+  ["NESTLEIND", "Nestle India", 2388, "FMCG"],
+  ["BEL", "Bharat Electronics", 312, "PSU"],
+  ["JIOFIN", "Jio Financial Services", 246, "FINANCIAL SERVICES"],
+  ["GRASIM", "Grasim Industries", 2688, "METAL"],
+  ["TECHM", "Tech Mahindra", 1588, "IT"],
+  ["TRENT", "Trent", 5488, "FMCG"],
+  ["HINDALCO", "Hindalco", 698, "METAL"],
+  ["CIPLA", "Cipla", 1544, "PHARMA"],
+  ["TATAPV", "Tata Motors PV", 318, "AUTO"],
+  ["TATACV", "Tata Motors CV", 467, "AUTO"],
+  ["BAJAJ-AUTO", "Bajaj Auto", 9188, "AUTO"],
+  ["EICHERMOT", "Eicher Motors", 5488, "AUTO"],
+  ["DRREDDY", "Dr Reddy's", 1288, "PHARMA"],
+  ["TATACONSUM", "Tata Consumer", 1142, "FMCG"],
+  ["APOLLOHOSP", "Apollo Hospitals", 6988, "PHARMA"],
+  ["SHRIRAMFIN", "Shriram Finance", 668, "FINANCIAL SERVICES"],
+  ["SBILIFE", "SBI Life", 1688, "FINANCIAL SERVICES"],
+  ["HDFCLIFE", "HDFC Life", 748, "FINANCIAL SERVICES"],
+  ["INDIGO", "InterGlobe Aviation", 5620, "SERVICES"],
+  ["MAXHEALTH", "Max Healthcare", 1128, "PHARMA"],
 ];
 
 const EXTRA_FNO = [
+  ["HEROMOTOCO", "Hero MotoCorp", 4988, "AUTO"],
+  ["INDUSINDBK", "IndusInd Bank", 1022, "BANKING"],
+  ["BPCL", "BPCL", 318, "ENERGY"],
+  ["DIVISLAB", "Divi's Labs", 4988, "PHARMA"],
   ["BANKBARODA", "Bank of Baroda", 248, "PSU BANK"],
   ["PNB", "Punjab National Bank", 108, "PSU BANK"],
   ["CANBK", "Canara Bank", 112, "PSU BANK"],
@@ -93,13 +98,10 @@ const EXTRA_FNO = [
 ];
 
 const EXTRA_500 = [
-  ["INDIGO", "InterGlobe Aviation", 4488, "SERVICES"],
-  ["ZOMATO", "Eternal", 268, "SERVICES"],
   ["PAYTM", "One97 Communications", 812, "FINANCIAL SERVICES"],
   ["POLYCAB", "Polycab", 5988, "INFRA"],
   ["DIXON", "Dixon Technologies", 12880, "IT"],
   ["KALYANKJIL", "Kalyan Jewellers", 548, "FMCG"],
-  ["MAXHEALTH", "Max Healthcare", 1128, "PHARMA"],
   ["FEDERALBNK", "Federal Bank", 198, "BANKING"],
   ["IDFCFIRSTB", "IDFC First Bank", 72, "BANKING"],
   ["BANDHANBNK", "Bandhan Bank", 178, "BANKING"],
@@ -123,15 +125,51 @@ const SECTORS = [
   "FINANCIAL SERVICES",
 ];
 
-const HERO_BUY = new Set(["RELIANCE", "SBIN", "TATAMOTORS", "HINDALCO", "BEL", "TRENT"]);
+const HERO_BUY = new Set(["RELIANCE", "SBIN", "TATAPV", "TATACV", "HINDALCO", "BEL", "TRENT"]);
 const HERO_SELL = new Set(["INFY", "WIPRO", "ASIANPAINT", "HINDUNILVR", "TECHM"]);
 
+const FY_SYMBOL = {
+  NIFTY: "NSE:NIFTY50-INDEX",
+  BANKNIFTY: "NSE:NIFTYBANK-INDEX",
+  SENSEX: "BSE:SENSEX-INDEX",
+  INDIAVIX: "NSE:INDIAVIX-INDEX",
+  FINNIFTY: "NSE:FINNIFTY-INDEX",
+  TATAPV: "NSE:TMPV-EQ",
+  TATACV: "NSE:TMCV-EQ",
+  TMPV: "NSE:TMPV-EQ",
+  TMCV: "NSE:TMCV-EQ",
+};
+
+const FY_TO_INTERNAL = {
+  "NSE:TMPV-EQ": "TATAPV",
+  "NSE:TMCV-EQ": "TATACV",
+  TMPV: "TATAPV",
+  TMCV: "TATACV",
+  TATAMOTORS: "TATAPV",
+  ZOMATO: "ETERNAL",
+  "NSE:ETERNAL-EQ": "ETERNAL",
+  "NSE:NIFTY50-INDEX": "NIFTY",
+  NIFTY50: "NIFTY",
+  "NSE:NIFTYBANK-INDEX": "BANKNIFTY",
+  NIFTYBANK: "BANKNIFTY",
+  "BSE:SENSEX-INDEX": "SENSEX",
+  "NSE:INDIAVIX-INDEX": "INDIAVIX",
+  "NSE:FINNIFTY-INDEX": "FINNIFTY",
+};
+
 function fySymbol(sym) {
-  if (sym === "NIFTY") return "NSE:NIFTY50-INDEX";
-  if (sym === "BANKNIFTY") return "NSE:NIFTYBANK-INDEX";
-  if (sym === "SENSEX") return "BSE:SENSEX-INDEX";
-  if (sym === "INDIAVIX") return "NSE:INDIAVIX-INDEX";
-  return `NSE:${sym}-EQ`;
+  return FY_SYMBOL[sym] || `NSE:${sym}-EQ`;
+}
+
+function internalFromFy(n) {
+  const raw = String(n || "");
+  if (FY_TO_INTERNAL[raw]) return FY_TO_INTERNAL[raw];
+  const short = raw.replace(/^NSE:/, "").replace(/^BSE:/, "").replace(/-EQ$/, "").replace(/-INDEX$/, "");
+  return FY_TO_INTERNAL[short] || short;
+}
+
+function isCashSessionOpen() {
+  return getMarketStatus().code === "OPEN";
 }
 
 function makeBar(t, o, r) {
@@ -358,6 +396,7 @@ function snapshot() {
     sectors: sectorCards([...universe.values()]),
     live: liveMode && isFyersConnected(),
     demo: !(liveMode && isFyersConnected()),
+    frozen: !isCashSessionOpen(),
     selected: universe.get(selected),
     market: getMarketStatus(),
   };
@@ -400,6 +439,7 @@ function seed() {
 }
 
 function stepTicks() {
+  if (!isCashSessionOpen()) return;
   const rand = Math.random;
   for (const row of universe.values()) {
     const last = row.bars[row.bars.length - 1];
@@ -418,7 +458,7 @@ async function overlayLiveQuotes() {
     const quotes = await getQuotes(syms);
     liveMode = true;
     for (const q of quotes) {
-      const short = (q.symbol || "").replace("NSE:", "").replace("-EQ", "").replace("-INDEX", "");
+      const short = internalFromFy(q.symbol);
       const row = universe.get(short);
       if (!row || !q.ltp) continue;
       const last = row.bars[row.bars.length - 1];
@@ -447,7 +487,8 @@ export const Market = {
     return () => listeners.delete(fn);
   },
   get(sym) {
-    return universe.get(sym);
+    const mapped = FY_TO_INTERNAL[sym] || sym;
+    return universe.get(mapped) || universe.get(sym);
   },
   getSelected() {
     return universe.get(selected);
@@ -463,7 +504,7 @@ export const Market = {
     if (kind === "NIFTY500") return all.filter((r) => r.nifty500);
     if (kind === "WATCHLIST") {
       const lists = Storage.getWatchlists();
-      const set = new Set(lists.flatMap((l) => l.symbols));
+      const set = new Set(lists.flatMap((l) => l.symbols).map((s) => FY_TO_INTERNAL[s] || s));
       return all.filter((r) => set.has(r.symbol));
     }
     return all;
@@ -481,6 +522,7 @@ export const Market = {
     if (ticking) return;
     ticking = true;
     tickTimer = setInterval(() => {
+      if (!isCashSessionOpen()) return;
       stepTicks();
       if (isFyersConnected()) overlayLiveQuotes();
     }, ms);
@@ -490,11 +532,16 @@ export const Market = {
     clearInterval(tickTimer);
   },
   refresh() {
+    if (!isCashSessionOpen()) return;
     stepTicks();
   },
   fySymbol,
+  internalFromFy,
   isDemo() {
     return !(liveMode && isFyersConnected());
+  },
+  isFrozen() {
+    return !isCashSessionOpen();
   },
 };
 

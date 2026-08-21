@@ -82,7 +82,7 @@ export async function renderSettings(root) {
             <option>NIFTY50</option><option>FNO</option><option>NIFTY500</option><option>WATCHLIST</option>
           </select>
         </label>
-        <label class="chk"><input type="checkbox" name="analysisMode" ${s.scanner.analysisMode ? "checked" : ""}/> Analysis mode when market is closed</label>
+        <label class="chk"><input type="checkbox" name="analysisMode" ${s.scanner.analysisMode ? "checked" : ""}/> Show setups after hours (prices stay frozen)</label>
       </div>
     </section>
 

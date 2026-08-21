@@ -93,11 +93,11 @@ export const DEFAULT_SETTINGS = {
 };
 
 export const DEFAULT_WATCHLISTS = [
-  { id: "momentum", name: "Momentum", symbols: ["RELIANCE", "SBIN", "TATAMOTORS", "HINDALCO", "BEL"] },
+  { id: "momentum", name: "Momentum", symbols: ["RELIANCE", "SBIN", "TATAPV", "TATACV", "HINDALCO", "BEL"] },
   { id: "breakout", name: "Breakout", symbols: ["TRENT", "BAJFINANCE", "ADANIENT", "BEL", "POWERGRID"] },
   { id: "fno", name: "F&O", symbols: ["NIFTY", "BANKNIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"] },
   { id: "options", name: "Options", symbols: ["NIFTY", "BANKNIFTY", "FINNIFTY"] },
-  { id: "mystocks", name: "My Stocks", symbols: ["RELIANCE", "TCS", "INFY", "ITC", "TATAMOTORS"] },
+  { id: "mystocks", name: "My Stocks", symbols: ["RELIANCE", "TCS", "INFY", "ITC", "TATAPV", "TATACV"] },
 ];
 
 function read(key, fallback) {
