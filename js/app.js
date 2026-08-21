@@ -90,9 +90,12 @@ function fmtCcy(ccy, n) {
 
 function globalCard(g) {
   if (!g) return "";
+  const flagSrc = g.flag ? `https://flagcdn.com/w80/${g.flag}.png` : "";
+  const flag2x = g.flag ? `https://flagcdn.com/w160/${g.flag}.png 2x` : "";
   return `<article class="global-card">
     <header>
       <span class="led ${g.live ? "live" : "closed"}" title="${g.live ? "LIVE" : "CLOSED"}"></span>
+      ${g.flag ? `<img class="flag-logo" src="${flagSrc}" srcset="${flag2x}" alt="${g.region}" width="32" height="24" loading="lazy"/>` : ""}
       <div>
         <h3>${g.name}</h3>
         <p class="muted">${g.region}</p>
@@ -101,6 +104,36 @@ function globalCard(g) {
     </header>
     <p class="big-price">${fmtCcy(g.ccy, g.ltp)}</p>
     <p class="${g.ch >= 0 ? "pos" : "neg"}">${g.ch >= 0 ? "+" : ""}${fmtCcy(g.ccy, g.ch)} · ${fmtPct(g.chp)}</p>
+  </article>`;
+}
+
+function indexLevelsCard(row) {
+  if (!row?.plan?.piv) return "";
+  const p = row.plan.piv;
+  const ltp = row.ltp;
+  const cell = (k, v, tone) => {
+    const near = ltp && v && Math.abs(ltp - v) / ltp < 0.0025;
+    return `<div class="lvl-cell ${tone}${near ? " now" : ""}"><span>${k}</span><b>${inr(v)}</b></div>`;
+  };
+  return `<article class="levels-card">
+    <header>
+      <div>
+        <h3>${row.name}</h3>
+        <p class="muted">${row.symbol}</p>
+      </div>
+      <div class="lvl-ltp">
+        <b>${inr(row.ltp)}</b>
+        <span class="${row.chp >= 0 ? "pos" : "neg"}">${fmtPct(row.chp)}</span>
+      </div>
+    </header>
+    <div class="lvl-ladder">
+      ${cell("R2", p.r2, "res")}
+      ${cell("R1", p.r1, "res")}
+      ${cell("PIVOT", p.p, "mid")}
+      ${cell("VWAP", row.ta.vwap, "mid")}
+      ${cell("S1", p.s1, "sup")}
+      ${cell("S2", p.s2, "sup")}
+    </div>
   </article>`;
 }
 
@@ -219,7 +252,6 @@ function renderCommand(root) {
   const buys = rows.filter((r) => r.signal === "BUY");
   const sells = rows.filter((r) => r.signal === "SELL");
   const brk = rows.filter((r) => r.ta.breakout.yes).sort((a, b) => b.ta.rvol - a.ta.rvol)[0];
-  const nifty = snap.indices.find((i) => i.symbol === "NIFTY");
   const rg = snap.regime;
   root.innerHTML = `
     ${freezeNote()}
@@ -255,19 +287,8 @@ function renderCommand(root) {
       </div>
     </div>
     <div class="idx-row" id="idx-row">${snap.indices.map(indexCard).join("")}</div>
-    <section class="card">
-      <header class="card-h">Intraday levels · ${nifty?.symbol || "NIFTY"}</header>
-      ${
-        nifty
-          ? `<div class="plan-grid">
-        <div><span>Support S1</span><b>${inr(nifty.plan.piv.s1)}</b></div>
-        <div><span>Resistance R1</span><b>${inr(nifty.plan.piv.r1)}</b></div>
-        <div><span>VWAP</span><b>${inr(nifty.ta.vwap)}</b></div>
-        <div><span>ATR</span><b>${inr(nifty.ta.atr, 2)}</b></div>
-      </div>`
-          : ""
-      }
-    </section>
+    <p class="kicker">Intraday levels</p>
+    <div class="idx-row levels-row">${["NIFTY", "SENSEX", "BANKNIFTY", "FINNIFTY"].map((s) => indexLevelsCard(snap.indices.find((i) => i.symbol === s))).join("")}</div>
   `;
   bindSetupClicks(root);
 }
@@ -312,19 +333,8 @@ function renderDashboard(root) {
     </div>
     <p class="kicker">High conviction setups</p>
     <div class="setup-row">${buys.map(setupCard).join("") || `<div class="empty">NO TRADE — filters prefer silence over a weak print</div>`}</div>
-    <section class="card">
-      <header class="card-h">Intraday levels · NIFTY</header>
-      ${(() => {
-        const n = snap.indices.find((i) => i.symbol === "NIFTY");
-        if (!n) return "";
-        return `<div class="plan-grid">
-          <div><span>S1</span><b>${inr(n.plan.piv.s1)}</b></div>
-          <div><span>R1</span><b>${inr(n.plan.piv.r1)}</b></div>
-          <div><span>VWAP</span><b>${inr(n.ta.vwap)}</b></div>
-          <div><span>ATR</span><b>${inr(n.ta.atr, 2)}</b></div>
-        </div>`;
-      })()}
-    </section>
+    <p class="kicker">Intraday levels</p>
+    <div class="idx-row levels-row">${["NIFTY", "SENSEX", "BANKNIFTY", "FINNIFTY"].map((s) => indexLevelsCard(snap.indices.find((i) => i.symbol === s))).join("")}</div>
   `;
   bindSetupClicks(root);
 }

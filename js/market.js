@@ -209,16 +209,16 @@ const INDICES = [
 ];
 
 const GLOBAL_INDICES = [
-  ["GIFTNIFTY", "GIFT Nifty", "India", 24310, 24294, "₹", { kind: "gift" }],
-  ["SPX", "S&P 500", "US", 7674.37, 7641.16, "$", { tz: "America/New_York", open: 9 * 60 + 30, close: 16 * 60 }],
-  ["NASDAQ", "Nasdaq", "US", 26180.46, 26067.17, "$", { tz: "America/New_York", open: 9 * 60 + 30, close: 16 * 60 }],
-  ["FTSE100", "FTSE 100", "UK", 10816.56, 10748.2, "£", { tz: "Europe/London", open: 8 * 60, close: 16 * 60 + 30 }],
-  ["CAC40", "CAC 40", "France", 8484.43, 8453.09, "€", { tz: "Europe/Paris", open: 9 * 60, close: 17 * 60 + 30 }],
-  ["DAX", "DAX", "Germany", 26136.56, 25983.04, "€", { tz: "Europe/Berlin", open: 9 * 60, close: 17 * 60 + 30 }],
-  ["NIKKEI", "Nikkei 225", "Japan", 66016.36, 66216.79, "¥", { tz: "Asia/Tokyo", open: 9 * 60, close: 15 * 60, lunch: [11 * 60 + 30, 12 * 60 + 30] }],
-  ["HANGSENG", "Hang Seng", "Hong Kong", 26009.46, 25698.49, "HK$", { tz: "Asia/Hong_Kong", open: 9 * 60 + 30, close: 16 * 60, lunch: [12 * 60, 13 * 60] }],
-  ["TAIWAN", "Taiwan Index", "Taiwan", 45224.29, 44933.74, "NT$", { tz: "Asia/Taipei", open: 9 * 60, close: 13 * 60 + 30 }],
-  ["ASX200", "ASX 200", "Australia", 9058.9, 9083.8, "A$", { tz: "Australia/Sydney", open: 10 * 60, close: 16 * 60 }],
+  ["GIFTNIFTY", "GIFT Nifty", "India", 24310, 24294, "₹", "in", { kind: "gift" }],
+  ["SPX", "S&P 500", "US", 7674.37, 7641.16, "$", "us", { tz: "America/New_York", open: 9 * 60 + 30, close: 16 * 60 }],
+  ["NASDAQ", "Nasdaq", "US", 26180.46, 26067.17, "$", "us", { tz: "America/New_York", open: 9 * 60 + 30, close: 16 * 60 }],
+  ["FTSE100", "FTSE 100", "UK", 10816.56, 10748.2, "£", "gb", { tz: "Europe/London", open: 8 * 60, close: 16 * 60 + 30 }],
+  ["CAC40", "CAC 40", "France", 8484.43, 8453.09, "€", "fr", { tz: "Europe/Paris", open: 9 * 60, close: 17 * 60 + 30 }],
+  ["DAX", "DAX", "Germany", 26136.56, 25983.04, "€", "de", { tz: "Europe/Berlin", open: 9 * 60, close: 17 * 60 + 30 }],
+  ["NIKKEI", "Nikkei 225", "Japan", 66016.36, 66216.79, "¥", "jp", { tz: "Asia/Tokyo", open: 9 * 60, close: 15 * 60, lunch: [11 * 60 + 30, 12 * 60 + 30] }],
+  ["HANGSENG", "Hang Seng", "Hong Kong", 26009.46, 25698.49, "HK$", "hk", { tz: "Asia/Hong_Kong", open: 9 * 60 + 30, close: 16 * 60, lunch: [12 * 60, 13 * 60] }],
+  ["TAIWAN", "Taiwan Index", "Taiwan", 45224.29, 44933.74, "NT$", "tw", { tz: "Asia/Taipei", open: 9 * 60, close: 13 * 60 + 30 }],
+  ["ASX200", "ASX 200", "Australia", 9058.9, 9083.8, "A$", "au", { tz: "Australia/Sydney", open: 10 * 60, close: 16 * 60 }],
 ];
 
 const CAP_INDICES = [
@@ -607,7 +607,7 @@ function snapshot() {
     indices: indices.filter((r) => r.kind === "broad"),
     capIndices: indices.filter((r) => r.kind === "cap"),
     sectorIndices: indices.filter((r) => r.kind === "sector"),
-    globalIndices: GLOBAL_INDICES.map(([sym, name, region, close, prev, ccy, session]) => {
+    globalIndices: GLOBAL_INDICES.map(([sym, name, region, close, prev, ccy, flag, session]) => {
       const ch = close - prev;
       return {
         symbol: sym,
@@ -618,6 +618,7 @@ function snapshot() {
         ch,
         chp: (ch / prev) * 100,
         ccy,
+        flag,
         live: isSessionLive(session),
       };
     }),
