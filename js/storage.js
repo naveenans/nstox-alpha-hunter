@@ -304,6 +304,34 @@ export function getMarketStatus() {
   return { code: "CLOSED", label: "MARKET CLOSED", session: "Opens 09:15 IST", open: false };
 }
 
+export function wallClock(tz) {
+  const iso = new Date().toLocaleString("sv-SE", { timeZone: tz });
+  const [date, time] = iso.split(" ");
+  const [year, month, day] = date.split("-").map(Number);
+  const [h, m, s] = (time || "00:00:00").split(":").map(Number);
+  const wd = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  return { year, month, day, h, m, s, wd, mins: h * 60 + m, date };
+}
+
+export function isSessionLive(spec) {
+  if (spec.kind === "gift") {
+    const t = wallClock("Asia/Kolkata");
+    const x = t.mins;
+    if (t.wd === 6) return x < 2 * 60 + 45;
+    if (t.wd === 0) return x >= 6 * 60 + 30;
+    const s1 = x >= 6 * 60 + 30 && x < 15 * 60 + 40;
+    const s2eve = x >= 16 * 60 + 35;
+    const s2morn = x < 2 * 60 + 45;
+    if (t.wd === 5) return s1 || (x >= 16 * 60 + 35 && x < 23 * 60 + 55);
+    return s1 || s2eve || s2morn;
+  }
+  const t = wallClock(spec.tz);
+  if (t.wd === 0 || t.wd === 6) return false;
+  if (t.mins < spec.open || t.mins >= spec.close) return false;
+  if (spec.lunch && t.mins >= spec.lunch[0] && t.mins < spec.lunch[1]) return false;
+  return true;
+}
+
 export function lastSessionCloseMs() {
   const t = nowIST();
   const dt = new Date(Date.UTC(t.year, t.month - 1, t.day));

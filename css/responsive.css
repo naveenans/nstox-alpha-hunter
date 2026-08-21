@@ -2,7 +2,7 @@
 
 @media (max-width: 1100px) {
   .idx-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .idx-row.cap-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .idx-row.cap-row, .idx-row.global-row, .idx-row.broad-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .heat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sector-row { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
   .flow-grid { grid-template-columns: 1fr; }
@@ -52,7 +52,7 @@
   .levels-hero, .opt-hero, .hero-regime { flex-direction: column; align-items: flex-start; }
   .page-head { flex-direction: column; align-items: flex-start; }
   #toast-root { left: 12px; right: 12px; bottom: 72px; }
-  .idx-row, .setup-row, .sector-row, .flow-grid, .idx-row.cap-row, .heat-grid { grid-template-columns: minmax(0, 1fr); }
+  .idx-row, .setup-row, .sector-row, .flow-grid, .idx-row.cap-row, .idx-row.global-row, .idx-row.broad-row, .heat-grid { grid-template-columns: minmax(0, 1fr); }
   .sec-detail { flex-direction: column; }
   .idx-card, .setup-card, .card, .sector-card { min-width: 0; max-width: 100%; }
   .big-price { font-size: 1.28rem; word-break: break-word; }

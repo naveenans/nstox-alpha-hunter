@@ -81,6 +81,29 @@ function setupCard(row) {
   </article>`;
 }
 
+function fmtCcy(ccy, n) {
+  const abs = Math.abs(n);
+  const body = abs >= 1000 ? inr(abs).replace(/^₹\s?/, "") : abs.toLocaleString("en-IN", { maximumFractionDigits: 2 });
+  const sign = n < 0 ? "−" : "";
+  return `${sign}${ccy}${body}`;
+}
+
+function globalCard(g) {
+  if (!g) return "";
+  return `<article class="global-card">
+    <header>
+      <span class="led ${g.live ? "live" : "closed"}" title="${g.live ? "LIVE" : "CLOSED"}"></span>
+      <div>
+        <h3>${g.name}</h3>
+        <p class="muted">${g.region}</p>
+      </div>
+      <span class="chip ${g.live ? "buy" : "sell"}">${g.live ? "LIVE" : "CLOSED"}</span>
+    </header>
+    <p class="big-price">${fmtCcy(g.ccy, g.ltp)}</p>
+    <p class="${g.ch >= 0 ? "pos" : "neg"}">${g.ch >= 0 ? "+" : ""}${fmtCcy(g.ccy, g.ch)} · ${fmtPct(g.chp)}</p>
+  </article>`;
+}
+
 function indexCard(row) {
   if (!row) return "";
   return `<article class="idx-card">
@@ -168,6 +191,20 @@ function paintStatus() {
     el("mode-badge").textContent = frozen ? "FROZEN · MARKET CLOSED" : demo ? "DEMO MODE" : "LIVE MODE";
     el("mode-badge").className = `badge ${frozen ? "demo" : demo ? "demo" : "live"}`;
   }
+  document.querySelectorAll(".global-row .global-card").forEach((elCard, i) => {
+    const g = Market.snapshot().globalIndices?.[i];
+    if (!g) return;
+    const led = elCard.querySelector(".led");
+    const chip = elCard.querySelector(".chip");
+    if (led) {
+      led.className = `led ${g.live ? "live" : "closed"}`;
+      led.title = g.live ? "LIVE" : "CLOSED";
+    }
+    if (chip) {
+      chip.className = `chip ${g.live ? "buy" : "sell"}`;
+      chip.textContent = g.live ? "LIVE" : "CLOSED";
+    }
+  });
 }
 
 function freezeNote() {
@@ -260,9 +297,11 @@ function renderDashboard(root) {
       </div>
     </section>
     <p class="kicker">Broad indices</p>
-    <div class="idx-row">${snap.indices.map(indexCard).join("")}</div>
+    <div class="idx-row broad-row">${snap.indices.map(indexCard).join("")}</div>
     <p class="kicker">Midcap · Smallcap · Microcap</p>
     <div class="idx-row cap-row">${(snap.capIndices || []).map(indexCard).join("")}</div>
+    <p class="kicker">Global Indices</p>
+    <div class="idx-row global-row">${(snap.globalIndices || []).map(globalCard).join("")}</div>
     <div class="grid-2">
       <section class="card"><header class="card-h">NIFTY 50 · leaders</header>${miniTable(n50)}</section>
       <section class="card"><header class="card-h">F&O · leaders</header>${miniTable(fno)}</section>
