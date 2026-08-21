@@ -490,10 +490,16 @@ function computeRegime(rows) {
   const nifty = rows.find((r) => r.symbol === "NIFTY") || indexFromMean(rows, "NIFTY");
   const vix = rows.find((r) => r.symbol === "INDIAVIX");
   const n50 = rows.filter((r) => r.nifty50);
-  const aboveVwap = n50.filter((r) => r.ta.aboveVwap).length / Math.max(1, n50.length);
-  const emaBull = n50.filter((r) => r.ta.align.bias === "BULL").length / Math.max(1, n50.length);
-  const adv = n50.filter((r) => r.chp > 0).length;
-  const dec = n50.filter((r) => r.chp < 0).length;
+  const total = n50.length;
+  const chpOf = (r) => (r.liveChp != null ? r.liveChp : r.chp);
+  const adv = n50.filter((r) => chpOf(r) > 0.0005).length;
+  const dec = n50.filter((r) => chpOf(r) < -0.0005).length;
+  const unch = Math.max(0, total - adv - dec);
+  const aboveVwapCount = n50.filter((r) => r.ta.aboveVwap).length;
+  const emaBullCount = n50.filter((r) => r.ta.align.bias === "BULL").length;
+  const emaBearCount = n50.filter((r) => r.ta.align.bias === "BEAR").length;
+  const aboveVwap = aboveVwapCount / Math.max(1, total);
+  const emaBull = emaBullCount / Math.max(1, total);
   const breadth = adv / Math.max(1, adv + dec);
   const ta = nifty?.ta;
   let pts = 0;
@@ -528,9 +534,20 @@ function computeRegime(rows) {
     label,
     score: Math.round(conf),
     pts,
-    breadth: { adv, dec, aboveVwap, emaBull },
+    breadth: {
+      adv,
+      dec,
+      unch,
+      total,
+      aboveVwap,
+      emaBull,
+      aboveVwapCount,
+      emaBullCount,
+      emaBearCount,
+      adRatio: dec ? adv / dec : adv,
+    },
     vix: vixPx,
-    note: "Confluence score from NIFTY vs VWAP/EMA, RSI, momentum, volume, breadth and VIX. Not a probability.",
+    note: "Nifty 50 breadth + NIFTY vs VWAP/EMA, RSI, momentum, volume and VIX. Not a probability.",
   };
 }
 
@@ -676,8 +693,10 @@ function stepTicks() {
 async function overlayLiveQuotes() {
   if (!isFyersConnected()) return;
   try {
-    const syms = [...universe.values()].slice(0, 40).map((r) => r.fy);
-    const quotes = await getQuotes(syms);
+    const want = [...universe.values()].filter(
+      (r) => r.nifty50 || (r.isIndex && (r.kind === "broad" || r.kind === "cap")),
+    );
+    const quotes = await getQuotes(want.map((r) => r.fy).filter(Boolean));
     liveMode = true;
     for (const q of quotes) {
       const short = internalFromFy(q.symbol);
@@ -689,8 +708,11 @@ async function overlayLiveQuotes() {
       last.l = Math.min(last.l, q.low || q.ltp);
       if (q.volume) last.v = q.volume;
       if (q.prevClose) row.prevClose = q.prevClose;
+      if (q.chp != null) row.liveChp = q.chp;
+      if (q.ch != null) row.liveCh = q.ch;
       universe.set(short, enrich(row));
     }
+    regime = computeRegime([...universe.values()]);
     emit();
   } catch {
     liveMode = false;
@@ -701,6 +723,7 @@ export const Market = {
   init() {
     seed();
     emit();
+    if (isFyersConnected()) overlayLiveQuotes();
     return snapshot();
   },
   snapshot,
@@ -748,13 +771,14 @@ export const Market = {
   sectors() {
     return sectorCards([...universe.values()]);
   },
-  startTicks(ms = 2500) {
+  startTicks(ms = 2800) {
     if (ticking) return;
     ticking = true;
     tickTimer = setInterval(() => {
-      if (!isCashSessionOpen()) return;
-      stepTicks();
-      if (isFyersConnected()) overlayLiveQuotes();
+      const open = isCashSessionOpen();
+      const live = isFyersConnected();
+      if (open && !live) stepTicks();
+      else if (live) overlayLiveQuotes();
     }, ms);
   },
   stopTicks() {

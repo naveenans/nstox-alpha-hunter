@@ -248,6 +248,34 @@ function freezeNote() {
   return `<p class="warn-banner">Cash market is closed (${m.session}). Prices are frozen at the previous session — tickers will not move until 09:15 IST Monday–Friday.</p>`;
 }
 
+function regimePanel(rg, compact = false) {
+  const b = rg.breadth || { adv: 0, dec: 0, unch: 0, total: 50 };
+  const total = b.total || b.adv + b.dec + (b.unch || 0) || 50;
+  const advPct = (100 * b.adv) / total;
+  const unchPct = (100 * (b.unch || 0)) / total;
+  return `<section class="hero-regime ${compact ? "compact" : ""}">
+    <div>
+      ${compact ? `<p class="kicker">Market regime</p>` : `<p class="kicker">What are the best intraday setups right now?</p><h1>Market regime</h1>`}
+      <p class="regime-label ${/BULL/.test(rg.label) ? "pos" : /BEAR/.test(rg.label) ? "neg" : ""}">${rg.label}</p>
+      <p>Confluence ${rg.score}%</p>
+      <div class="breadth-bar" role="img" aria-label="Nifty 50 breadth ${b.adv} advances ${b.dec} declines ${b.unch || 0} unchanged">
+        <span class="adv" style="width:${advPct}%"></span>
+        <span class="unch" style="width:${unchPct}%"></span>
+        <span class="dec"></span>
+      </div>
+      <p class="breadth-meta">
+        <span class="pos">${b.adv} Adv</span>
+        · <span class="neg">${b.dec} Dec</span>
+        · ${b.unch || 0} Unch
+        · <b>${total}/50</b>
+        · A/D ${(b.adRatio || 0).toFixed(2)}
+      </p>
+      <p class="muted">Above VWAP ${b.aboveVwapCount ?? "—"}/${total} · EMA bull ${b.emaBullCount ?? "—"}/${total} · VIX ${(rg.vix ?? 0).toFixed(2)}</p>
+    </div>
+    ${compact ? "" : scoreRing(Math.min(10, rg.score / 10))}
+  </section>`;
+}
+
 function renderCommand(root) {
   const snap = Market.snapshot();
   const rows = snap.rows.slice().sort((a, b) => b.score - a.score);
@@ -257,15 +285,7 @@ function renderCommand(root) {
   const rg = snap.regime;
   root.innerHTML = `
     ${freezeNote()}
-    <section class="hero-regime">
-      <div>
-        <p class="kicker">What are the best intraday setups right now?</p>
-        <h1>Market regime</h1>
-        <p class="regime-label ${/BULL/.test(rg.label) ? "pos" : /BEAR/.test(rg.label) ? "neg" : ""}">${rg.label}</p>
-        <p>Confluence ${rg.score}% · ${rg.note}</p>
-      </div>
-      ${scoreRing(Math.min(10, rg.score / 10))}
-    </section>
+    ${regimePanel(rg)}
     <div class="flow-grid">
       <div>
         <p class="kicker">Top buy</p>
@@ -312,13 +332,7 @@ function renderDashboard(root) {
         <h1>Dashboard</h1>
       </div>
     </div>
-    <section class="hero-regime compact">
-      <div>
-        <p class="kicker">Market regime</p>
-        <p class="regime-label ${/BULL/.test(rg.label) ? "pos" : /BEAR/.test(rg.label) ? "neg" : ""}">${rg.label}</p>
-        <p>Confluence ${rg.score}% · breadth ${snap.regime.breadth.adv}/${snap.regime.breadth.dec}</p>
-      </div>
-    </section>
+    ${regimePanel(rg, true)}
     <p class="kicker">Broad indices</p>
     <div class="idx-row broad-row">${snap.indices.map(indexCard).join("")}</div>
     <p class="kicker">Midcap · Smallcap · Microcap</p>

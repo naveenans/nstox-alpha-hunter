@@ -19,6 +19,19 @@
   line-height: 1;
   margin: 6px 0 10px;
 }
+.breadth-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: rgba(211, 91, 91, 0.55);
+  max-width: 420px;
+  margin: 12px 0 8px;
+}
+.breadth-bar .adv { background: #3dba7e; }
+.breadth-bar .unch { background: #6f6a60; min-width: 0; }
+.breadth-bar .dec { flex: 1; }
+.breadth-meta { font-variant-numeric: tabular-nums; font-size: 0.92rem; margin: 0 0 6px; }
 .flow-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
