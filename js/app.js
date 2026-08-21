@@ -2,7 +2,7 @@
  * NSTOX ALPHA HUNTER — shell, navigation, command center, dashboard, modal.
  */
 import { Storage, inr, fmtPct, nowIST, getMarketStatus } from "./storage.js";
-import { Market } from "./market.js";
+import { Market, SECTORS } from "./market.js";
 import { Scanner } from "./scanner.js";
 import { Options } from "./options.js";
 import { Levels } from "./levels.js";
@@ -17,6 +17,7 @@ const NAV = [
   { href: "scanner.html", id: "scanner", label: "Market Scanner" },
   { href: "nifty50.html", id: "nifty50", label: "NIFTY 50" },
   { href: "fno.html", id: "fno", label: "F&O Stocks" },
+  { href: "sectors.html", id: "sectors", label: "Sectors" },
   { href: "options.html", id: "options", label: "Options Finder" },
   { href: "levels.html", id: "levels", label: "Intraday Levels" },
   { href: "watchlist.html", id: "watchlist", label: "Watchlist" },
@@ -258,20 +259,10 @@ function renderDashboard(root) {
         <p>Confluence ${rg.score}% · breadth ${snap.regime.breadth.adv}/${snap.regime.breadth.dec}</p>
       </div>
     </section>
-    <p class="kicker">Sector strength · strongest first</p>
-    <div class="sector-row">
-      ${snap.sectors
-        .map(
-          (s) => `<article class="sector-card">
-        <h3>${s.name}</h3>
-        <p class="${s.chp >= 0 ? "pos" : "neg"}">${fmtPct(s.chp)}</p>
-        <p>RS ${s.rs.toFixed(2)} · Vol ${s.rvol.toFixed(1)}x</p>
-        <p>${s.trend} · <b class="gold">${s.score.toFixed(1)}/10</b></p>
-      </article>`,
-        )
-        .join("")}
-    </div>
+    <p class="kicker">Broad indices</p>
     <div class="idx-row">${snap.indices.map(indexCard).join("")}</div>
+    <p class="kicker">Midcap · Smallcap · Microcap</p>
+    <div class="idx-row cap-row">${(snap.capIndices || []).map(indexCard).join("")}</div>
     <div class="grid-2">
       <section class="card"><header class="card-h">NIFTY 50 · leaders</header>${miniTable(n50)}</section>
       <section class="card"><header class="card-h">F&O · leaders</header>${miniTable(fno)}</section>
@@ -310,6 +301,101 @@ function miniTable(rows) {
       )
       .join("")}
   </tbody></table>`;
+}
+
+function heatTone(chp) {
+  const mag = Math.min(3, Math.abs(chp));
+  const a = 0.08 + mag * 0.12;
+  return chp >= 0 ? `rgba(61,186,126,${a})` : `rgba(211,91,91,${a})`;
+}
+
+function renderSectors(root) {
+  const snap = Market.snapshot();
+  const idx = snap.sectorIndices || [];
+  const cards = snap.sectors || [];
+  let active = cards[0]?.name || SECTORS[0];
+
+  const paint = () => {
+    const stocks = Market.getBySector(active).sort((a, b) => b.chp - a.chp);
+    const meta = cards.find((s) => s.name === active);
+    const ix = idx.find((i) => i.sector === active);
+    root.querySelector("#sec-body").innerHTML = `
+      <div class="sec-detail">
+        <div>
+          <p class="kicker">${active}</p>
+          <h2>${active}</h2>
+          <p>${meta ? `${meta.n} names · ${meta.adv} up / ${meta.dec} down · ${meta.trend}` : ""}</p>
+          <p>Breadth RS vs Nifty ${meta ? meta.rs.toFixed(2) : "—"} · RVOL ${meta ? meta.rvol.toFixed(1) : "—"}x</p>
+        </div>
+        <div class="sec-idx">
+          <p class="muted">${ix ? ix.name : "Sector basket"}</p>
+          <p class="big-price">${ix ? inr(ix.ltp) : meta ? fmtPct(meta.chp) : "—"}</p>
+          <p class="${(ix?.chp ?? meta?.chp ?? 0) >= 0 ? "pos" : "neg"}">${fmtPct(ix?.chp ?? meta?.chp ?? 0)}</p>
+        </div>
+      </div>
+      <p class="muted">Leaders ${meta?.leaders?.join(" · ") || "—"} · Laggards ${meta?.laggards?.join(" · ") || "—"}</p>
+      <div class="table-wrap desktop-only">
+        <table class="scan-table">
+          <thead><tr><th>Symbol</th><th>Name</th><th>Cap</th><th>LTP</th><th>Change</th><th>RVOL</th><th>VWAP</th><th>Score</th><th>Signal</th></tr></thead>
+          <tbody>
+            ${stocks
+              .map(
+                (r) => `<tr data-sym="${r.symbol}">
+              <td>${r.symbol}</td><td class="muted">${r.name || ""}</td>
+              <td>${r.cap || (r.nifty50 ? "LARGE" : "—")}</td>
+              <td>${inr(r.ltp)}</td>
+              <td class="${r.chp >= 0 ? "pos" : "neg"}">${fmtPct(r.chp)}</td>
+              <td>${r.ta.rvol.toFixed(1)}x</td>
+              <td class="${r.ta.aboveVwap ? "pos" : "neg"}">${r.ta.aboveVwap ? "Above" : "Below"}</td>
+              <td class="gold">${r.score.toFixed(1)}</td>
+              <td><span class="chip ${r.signal === "BUY" ? "buy" : r.signal === "SELL" ? "sell" : "flat"}">${r.signal}</span></td>
+            </tr>`,
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+      <div class="scan-cards mobile-only">${stocks.map(setupCard).join("") || `<div class="empty">No names in this sector yet</div>`}</div>
+    `;
+    bindSetupClicks(root.querySelector("#sec-body"));
+    root.querySelectorAll("[data-sec]").forEach((el) => {
+      el.classList.toggle("on", el.dataset.sec === active);
+    });
+  };
+
+  root.innerHTML = `
+    ${freezeNote()}
+    <div class="page-head">
+      <div>
+        <p class="kicker">NSE sectoral tape</p>
+        <h1>Sectors</h1>
+      </div>
+    </div>
+    <p class="footnote">Index levels are Friday 21 Aug 2026 close. Open a sector for every tracked name in that group — Large / Mid / Small / Micro.</p>
+    <div class="heat-grid">
+      ${idx
+        .map(
+          (i) => `<button class="heat-cell" data-sec="${i.sector || ""}" style="background:${heatTone(i.chp)}">
+        <span>${i.name.replace("Nifty ", "")}</span>
+        <b class="${i.chp >= 0 ? "pos" : "neg"}">${fmtPct(i.chp)}</b>
+        <small>${inr(i.ltp)}</small>
+      </button>`,
+        )
+        .join("")}
+    </div>
+    <p class="kicker">Stock baskets</p>
+    <div class="sec-chips">
+      ${SECTORS.map((s) => `<button class="chip-btn" data-sec="${s}">${s}</button>`).join("")}
+    </div>
+    <div id="sec-body"></div>
+  `;
+  root.querySelectorAll("[data-sec]").forEach((el) => {
+    el.addEventListener("click", () => {
+      active = el.dataset.sec;
+      paint();
+    });
+  });
+  paint();
 }
 
 function renderUniverse(root, kind, title) {
@@ -510,6 +596,9 @@ function renderPage() {
     case "fno":
       renderUniverse(root, "FNO", "F&O Stocks");
       break;
+    case "sectors":
+      renderSectors(root);
+      break;
     case "options":
       Options.render(root);
       break;
@@ -548,7 +637,7 @@ function boot() {
   Alerts.permission();
   setInterval(paintStatus, 1000);
   Market.subscribe(() => {
-    if (["index", "dashboard", "nifty50", "fno"].includes(PAGE)) {
+    if (["index", "dashboard", "nifty50", "fno", "sectors"].includes(PAGE)) {
       if (document.getElementById("modal-root")?.innerHTML) return;
       const pageEl = document.querySelector(".page");
       const y = pageEl?.scrollTop;

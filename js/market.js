@@ -27,13 +27,13 @@ const NIFTY50 = [
   ["HCLTECH", "HCL Technologies", 1302.5, -15.9, "IT"],
   ["M&M", "Mahindra & Mahindra", 3412.2, -12.6, "AUTO"],
   ["ETERNAL", "Eternal", 328.0, 0.05, "SERVICES"],
-  ["TITAN", "Titan Company", 5086.1, 18.1, "FMCG"],
-  ["ULTRACEMCO", "UltraTech Cement", 11570.0, -5.0, "METAL"],
-  ["NTPC", "NTPC", 340.0, 2.5, "ENERGY"],
+  ["TITAN", "Titan Company", 5086.1, 18.1, "CONSUMER DURABLES"],
+  ["ULTRACEMCO", "UltraTech Cement", 11570.0, -5.0, "CEMENT"],
+  ["NTPC", "NTPC", 340.0, 2.5, "POWER"],
   ["BAJAJFINSV", "Bajaj Finserv", 2032.5, 16.5, "FINANCIAL SERVICES"],
   ["ADANIENT", "Adani Enterprises", 2997.0, 2.1, "ENERGY"],
-  ["ONGC", "ONGC", 236.4, -2.1, "ENERGY"],
-  ["POWERGRID", "Power Grid", 272.4, 7.6, "ENERGY"],
+  ["ONGC", "ONGC", 236.4, -2.1, "OIL & GAS"],
+  ["POWERGRID", "Power Grid", 272.4, 7.6, "POWER"],
   ["WIPRO", "Wipro", 180.79, -0.21, "IT"],
   ["ASIANPAINT", "Asian Paints", 2640.0, 14.8, "FMCG"],
   ["ADANIPORTS", "Adani Ports", 1700.0, 4.0, "INFRA"],
@@ -41,7 +41,7 @@ const NIFTY50 = [
   ["JSWSTEEL", "JSW Steel", 1293.7, -6.0, "METAL"],
   ["TATASTEEL", "Tata Steel", 183.0, -0.5, "METAL"],
   ["NESTLEIND", "Nestle India", 1477.1, 19.1, "FMCG"],
-  ["BEL", "Bharat Electronics", 414.0, 4.6, "PSU"],
+  ["BEL", "Bharat Electronics", 414.0, 4.6, "DEFENCE"],
   ["JIOFIN", "Jio Financial Services", 244.0, -0.6, "FINANCIAL SERVICES"],
   ["GRASIM", "Grasim Industries", 3308.0, 8.0, "METAL"],
   ["TECHM", "Tech Mahindra", 1584.0, -8.1, "IT"],
@@ -53,19 +53,19 @@ const NIFTY50 = [
   ["EICHERMOT", "Eicher Motors", 8010.0, -32.0, "AUTO"],
   ["DRREDDY", "Dr Reddy's", 1174.7, -5.3, "PHARMA"],
   ["TATACONSUM", "Tata Consumer", 1049.0, -7.3, "FMCG"],
-  ["APOLLOHOSP", "Apollo Hospitals", 8693.0, -42.0, "PHARMA"],
+  ["APOLLOHOSP", "Apollo Hospitals", 8693.0, -42.0, "HEALTHCARE"],
   ["SHRIRAMFIN", "Shriram Finance", 1130.0, 1.8, "FINANCIAL SERVICES"],
-  ["SBILIFE", "SBI Life", 1792.9, 10.9, "FINANCIAL SERVICES"],
-  ["HDFCLIFE", "HDFC Life", 554.8, 12.8, "FINANCIAL SERVICES"],
+  ["SBILIFE", "SBI Life", 1792.9, 10.9, "INSURANCE"],
+  ["HDFCLIFE", "HDFC Life", 554.8, 12.8, "INSURANCE"],
   ["INDIGO", "InterGlobe Aviation", 5110.0, -55.0, "SERVICES"],
-  ["MAXHEALTH", "Max Healthcare", 1000.0, 2.1, "PHARMA"],
+  ["MAXHEALTH", "Max Healthcare", 1000.0, 2.1, "HEALTHCARE"],
 ];
 
 const EXTRA_FNO = [
   ["TATACV", "Tata Motors CV", 472.55, 477.6, "AUTO"],
   ["HEROMOTOCO", "Hero MotoCorp", 5735.0, 5745.0, "AUTO"],
   ["INDUSINDBK", "IndusInd Bank", 1005.6, 1010.6, "BANKING"],
-  ["BPCL", "BPCL", 311.0, 316.65, "ENERGY"],
+  ["BPCL", "BPCL", 311.0, 316.65, "OIL & GAS"],
   ["DIVISLAB", "Divi's Labs", 8597.0, 8481.5, "PHARMA"],
   ["BANKBARODA", "Bank of Baroda", 247.0, 246.55, "PSU BANK"],
   ["PNB", "Punjab National Bank", 116.55, 117.32, "PSU BANK"],
@@ -80,8 +80,8 @@ const EXTRA_FNO = [
   ["VEDL", "Vedanta", 279.0, 269.7, "METAL"],
   ["HINDZINC", "Hindustan Zinc", 594.9, 567.5, "METAL"],
   ["NMDC", "NMDC", 84.61, 85.5, "METAL"],
-  ["IOC", "Indian Oil", 135.9, 138.61, "ENERGY"],
-  ["GAIL", "GAIL", 172.0, 172.1, "ENERGY"],
+  ["IOC", "Indian Oil", 135.9, 138.61, "OIL & GAS"],
+  ["GAIL", "GAIL", 172.0, 172.1, "OIL & GAS"],
   ["TVSMOTOR", "TVS Motor", 4390.0, 4385.9, "AUTO"],
   ["ASHOKLEY", "Ashok Leyland", 173.0, 177.1, "AUTO"],
   ["MOTHERSON", "Samvardhana Motherson", 169.38, 168.06, "AUTO"],
@@ -92,30 +92,175 @@ const EXTRA_FNO = [
   ["DABUR", "Dabur", 400.5, 406.8, "FMCG"],
   ["GODREJCP", "Godrej Consumer", 933.0, 928.0, "FMCG"],
   ["PIDILITIND", "Pidilite", 1649.0, 1669.0, "FMCG"],
-  ["HAVELLS", "Havells", 1268.0, 1299.0, "FMCG"],
-  ["SIEMENS", "Siemens", 3920.0, 3943.0, "INFRA"],
-  ["ABB", "ABB India", 7424.0, 7660.0, "INFRA"],
+  ["HAVELLS", "Havells", 1268.0, 1299.0, "CONSUMER DURABLES"],
+  ["SIEMENS", "Siemens", 3920.0, 3943.0, "CAPITAL GOODS"],
+  ["ABB", "ABB India", 7424.0, 7660.0, "CAPITAL GOODS"],
+];
+
+const EXTRA_SECTOR = [
+  ["HAL", "Hindustan Aeronautics", 5000.0, 5059.0, "DEFENCE", "MID"],
+  ["MAZDOCK", "Mazagon Dock", 2552.0, 2569.7, "DEFENCE", "MID"],
+  ["COCHINSHIP", "Cochin Shipyard", 1480.5, 1457.8, "DEFENCE", "SMALL"],
+  ["GRSE", "Garden Reach Shipbuilders", 2601.5, 2600.1, "DEFENCE", "SMALL"],
+  ["BDL", "Bharat Dynamics", 1359.0, 1380.0, "DEFENCE", "MID"],
+  ["SOLARINDS", "Solar Industries", 19900.0, 20000.0, "DEFENCE", "MID"],
+  ["BHEL", "BHEL", 413.0, 435.95, "CAPITAL GOODS", "MID"],
+  ["CUMMINSIND", "Cummins India", 5107.5, 5450.0, "CAPITAL GOODS", "MID"],
+  ["ADANIGREEN", "Adani Green", 1320.0, 1327.6, "POWER", "LARGE"],
+  ["ADANIPOWER", "Adani Power", 205.5, 203.56, "POWER", "LARGE"],
+  ["TATAPOWER", "Tata Power", 374.3, 381.5, "POWER", "LARGE"],
+  ["NHPC", "NHPC", 76.15, 76.6, "POWER", "MID"],
+  ["SJVN", "SJVN", 66.06, 66.56, "POWER", "SMALL"],
+  ["TORNTPOWER", "Torrent Power", 1247.7, 1312.8, "POWER", "MID"],
+  ["PETRONET", "Petronet LNG", 293.0, 281.8, "OIL & GAS", "MID"],
+  ["IGL", "Indraprastha Gas", 147.87, 151.0, "OIL & GAS", "MID"],
+  ["OIL", "Oil India", 475.0, 474.65, "OIL & GAS", "MID"],
+  ["ATGL", "Adani Total Gas", 646.1, 646.9, "OIL & GAS", "MID"],
+  ["VOLTAS", "Voltas", 1235.0, 1267.0, "CONSUMER DURABLES", "MID"],
+  ["BLUESTARCO", "Blue Star", 1511.9, 1508.1, "CONSUMER DURABLES", "MID"],
+  ["CROMPTON", "Crompton Greaves", 252.0, 246.5, "CONSUMER DURABLES", "MID"],
+  ["WHIRLPOOL", "Whirlpool India", 768.5, 777.35, "CONSUMER DURABLES", "SMALL"],
+  ["KAJARIACER", "Kajaria Ceramics", 1208.5, 1251.6, "CONSUMER DURABLES", "SMALL"],
+  ["BOSCHLTD", "Bosch", 48200.0, 46970.0, "AUTO", "MID"],
+  ["ASTRAL", "Astral", 1528.5, 1538.3, "CONSUMER DURABLES", "MID"],
+  ["SUPREMEIND", "Supreme Industries", 3642.0, 3590.0, "CONSUMER DURABLES", "MID"],
+  ["VBL", "Varun Beverages", 430.1, 433.85, "FMCG", "LARGE"],
+  ["UBL", "United Breweries", 1348.9, 1367.9, "FMCG", "MID"],
+  ["MARICO", "Marico", 849.25, 852.05, "FMCG", "LARGE"],
+  ["COLPAL", "Colgate-Palmolive", 1889.0, 1964.0, "FMCG", "MID"],
+  ["BRITANNIA", "Britannia", 5365.0, 5521.0, "FMCG", "LARGE"],
+  ["PAGEIND", "Page Industries", 35480.0, 37360.0, "FMCG", "MID"],
+  ["TATACHEM", "Tata Chemicals", 626.75, 662.9, "CHEMICALS", "MID"],
+  ["SRF", "SRF", 2571.9, 2616.0, "CHEMICALS", "MID"],
+  ["PIIND", "PI Industries", 2496.8, 2472.0, "CHEMICALS", "MID"],
+  ["DEEPAKNTR", "Deepak Nitrite", 1747.1, 1780.5, "CHEMICALS", "MID"],
+  ["UPL", "UPL", 569.0, 567.1, "CHEMICALS", "MID"],
+  ["COROMANDEL", "Coromandel International", 1996.1, 2097.9, "CHEMICALS", "MID"],
+  ["NAVINFLUOR", "Navin Fluorine", 8206.5, 8151.0, "CHEMICALS", "SMALL"],
+  ["CHAMBLFERT", "Chambal Fertilisers", 431.15, 439.05, "CHEMICALS", "SMALL"],
+  ["ZEEL", "Zee Entertainment", 107.58, 104.87, "MEDIA", "SMALL"],
+  ["SUNTV", "Sun TV Network", 472.05, 488.25, "MEDIA", "SMALL"],
+  ["PVRINOX", "PVR INOX", 1216.8, 1192.0, "MEDIA", "SMALL"],
+  ["IDEA", "Vodafone Idea", 13.94, 13.71, "TELECOM", "MID"],
+  ["INDUSTOWER", "Indus Towers", 375.75, 380.0, "TELECOM", "LARGE"],
+  ["TATACOMM", "Tata Communications", 1655.4, 1711.9, "TELECOM", "MID"],
+  ["LICI", "LIC of India", 422.25, 410.0, "INSURANCE", "LARGE"],
+  ["GICRE", "GIC Re", 355.75, 355.5, "INSURANCE", "MID"],
+  ["NIACL", "New India Assurance", 184.13, 183.64, "INSURANCE", "SMALL"],
+  ["CONCOR", "Container Corporation", 515.05, 524.5, "INFRA", "MID"],
+  ["GMRAIRPORT", "GMR Airports", 99.63, 101.31, "INFRA", "MID"],
+  ["IRB", "IRB Infrastructure", 18.95, 19.17, "INFRA", "SMALL"],
+  ["NH", "Narayana Hrudayalaya", 1815.8, 1828.5, "HEALTHCARE", "MID"],
+  ["ALKEM", "Alkem Laboratories", 5400.0, 5374.0, "PHARMA", "MID"],
+  ["BIOCON", "Biocon", 415.55, 412.0, "PHARMA", "MID"],
+  ["TORNTPHARM", "Torrent Pharma", 4896.5, 4900.0, "PHARMA", "MID"],
+  ["GLENMARK", "Glenmark Pharma", 2317.9, 2329.0, "PHARMA", "MID"],
+  ["LAURUSLABS", "Laurus Labs", 1802.0, 1809.7, "PHARMA", "MID"],
+  ["SAIL", "SAIL", 173.46, 173.6, "METAL", "MID"],
+  ["JINDALSTEL", "Jindal Steel", 1127.8, 1116.1, "METAL", "LARGE"],
+  ["NATIONALUM", "NALCO", 394.45, 387.55, "METAL", "MID"],
+  ["HINDCOPPER", "Hindustan Copper", 572.7, 572.65, "METAL", "SMALL"],
+  ["APLAPOLLO", "APL Apollo", 2139.0, 2081.3, "METAL", "MID"],
+  ["IDFCFIRSTB", "IDFC First Bank", 86.75, 85.05, "BANKING", "MID"],
+  ["FEDERALBNK", "Federal Bank", 361.0, 354.1, "BANKING", "MID"],
+  ["AUBANK", "AU Small Finance Bank", 1108.2, 1072.2, "BANKING", "MID"],
+  ["BANDHANBNK", "Bandhan Bank", 175.1, 173.25, "BANKING", "SMALL"],
+  ["YESBANK", "Yes Bank", 22.8, 22.92, "BANKING", "SMALL"],
+  ["MUTHOOTFIN", "Muthoot Finance", 3022.0, 2888.5, "FINANCIAL SERVICES", "MID"],
+  ["CHOLAFIN", "Cholamandalam Finance", 1862.9, 1884.7, "FINANCIAL SERVICES", "LARGE"],
+  ["MANAPPURAM", "Manappuram Finance", 357.5, 348.6, "FINANCIAL SERVICES", "SMALL"],
+  ["LICHSGFIN", "LIC Housing Finance", 497.0, 498.25, "FINANCIAL SERVICES", "MID"],
+  ["IIFL", "IIFL Finance", 679.8, 630.05, "FINANCIAL SERVICES", "SMALL"],
+  ["ANGELONE", "Angel One", 287.8, 293.5, "FINANCIAL SERVICES", "SMALL"],
+  ["MOTILALOFS", "Motilal Oswal", 990.0, 955.0, "FINANCIAL SERVICES", "SMALL"],
+  ["MCX", "MCX", 3185.0, 2933.1, "FINANCIAL SERVICES", "MID"],
+  ["PAYTM", "One97 Communications", 1632.0, 1580.2, "FINANCIAL SERVICES", "MID"],
+  ["POLICYBZR", "PB Fintech", 1795.2, 1728.1, "FINANCIAL SERVICES", "MID"],
+  ["KPITTECH", "KPIT Technologies", 589.3, 609.0, "IT", "MID"],
+  ["MPHASIS", "Mphasis", 2430.0, 2510.0, "IT", "MID"],
+  ["LTTS", "L&T Technology Services", 3604.6, 3528.5, "IT", "MID"],
+  ["OFSS", "Oracle Financial Services", 11724.0, 11789.0, "IT", "MID"],
+  ["TATAELXSI", "Tata Elxsi", 3708.0, 3760.0, "IT", "MID"],
+  ["NAUKRI", "Info Edge", 1350.1, 1355.8, "IT", "MID"],
+  ["PRESTIGE", "Prestige Estates", 1631.0, 1591.9, "REALTY", "MID"],
+  ["PHOENIXLTD", "Phoenix Mills", 1930.0, 1929.8, "REALTY", "MID"],
+  ["BRIGADE", "Brigade Enterprises", 639.3, 593.7, "REALTY", "SMALL"],
+  ["TIINDIA", "Tube Investments", 2885.8, 2741.4, "AUTO", "MID"],
+  ["BALKRISIND", "Balkrishna Industries", 2350.8, 2407.2, "AUTO", "MID"],
+  ["MRF", "MRF", 132665.0, 133015.0, "AUTO", "MID"],
+  ["APOLLOTYRE", "Apollo Tyres", 439.7, 436.7, "AUTO", "MID"],
+  ["EXIDEIND", "Exide Industries", 459.6, 475.7, "AUTO", "MID"],
+  ["JUBLFOOD", "Jubilant FoodWorks", 506.75, 511.5, "SERVICES", "MID"],
+  ["NYKAA", "Nykaa", 334.0, 327.05, "SERVICES", "MID"],
+  ["DMART", "Avenue Supermarts", 3906.0, 3995.0, "SERVICES", "LARGE"],
+  ["IRCTC", "IRCTC", 484.2, 499.95, "SERVICES", "MID"],
+  ["DEVYANI", "Devyani International", 144.4, 143.65, "SERVICES", "SMALL"],
 ];
 
 const INDICES = [
-  ["NIFTY", "Nifty 50", 24252.0, 24231.85],
-  ["BANKNIFTY", "Bank Nifty", 57761.95, 57495.9],
-  ["SENSEX", "Sensex", 77540.83, 77537.72],
-  ["FINNIFTY", "FinNifty", 26261.0, 26203.9],
-  ["INDIAVIX", "India VIX", 11.2, 10.76],
+  ["NIFTY", "Nifty 50", 24252.0, 24231.85, "broad"],
+  ["BANKNIFTY", "Bank Nifty", 57761.95, 57495.9, "broad"],
+  ["SENSEX", "Sensex", 77540.83, 77537.72, "broad"],
+  ["FINNIFTY", "FinNifty", 26261.0, 26203.9, "broad"],
+  ["INDIAVIX", "India VIX", 11.2, 10.76, "broad"],
+];
+
+const CAP_INDICES = [
+  ["MIDCAP100", "Nifty Midcap 100", 63687.75, 63668.65, "cap"],
+  ["MIDCAP50", "Nifty Midcap 50", 18292.35, 18301.5, "cap"],
+  ["SMALLCAP100", "Nifty Smallcap 100", 19983.75, 19840.9, "cap"],
+  ["SMALLCAP250", "Nifty Smallcap 250", 18426.0, 18337.98, "cap"],
+  ["MICROCAP250", "Nifty Microcap 250", 26359.7, 26267.76, "cap"],
+];
+
+const SECTOR_INDICES = [
+  ["NIFTYIT", "Nifty IT", 30475.7, 30672.0, "sector", "IT"],
+  ["NIFTYAUTO", "Nifty Auto", 29147.55, 29302.75, "sector", "AUTO"],
+  ["NIFTYPHARMA", "Nifty Pharma", 26302.9, 26416.5, "sector", "PHARMA"],
+  ["NIFTYFMCG", "Nifty FMCG", 47501.2, 47864.8, "sector", "FMCG"],
+  ["NIFTYMETAL", "Nifty Metal", 13159.15, 13059.9, "sector", "METAL"],
+  ["NIFTYENERGY", "Nifty Energy", 38219.05, 38150.35, "sector", "ENERGY"],
+  ["NIFTYREALTY", "Nifty Realty", 910.45, 907.91, "sector", "REALTY"],
+  ["NIFTYPSUBANK", "Nifty PSU Bank", 8577.05, 8616.67, "sector", "PSU BANK"],
+  ["NIFTYPVTBANK", "Nifty Private Bank", 27581.5, 27449.65, "sector", "BANKING"],
+  ["NIFTYMEDIA", "Nifty Media", 1614.5, 1621.47, "sector", "MEDIA"],
+  ["NIFTYINFRA", "Nifty Infra", 9344.75, 9349.42, "sector", "INFRA"],
+  ["NIFTYHEALTH", "Nifty Healthcare", 16384.4, 16465.05, "sector", "HEALTHCARE"],
+  ["NIFTYCONSDUR", "Nifty Consumer Durables", 40536.0, 40503.6, "sector", "CONSUMER DURABLES"],
+  ["NIFTYOILGAS", "Nifty Oil & Gas", 11161.75, 11178.5, "sector", "OIL & GAS"],
+  ["NIFTYCMDT", "Nifty Commodities", 9784.45, 9783.47, "sector", "METAL"],
+  ["NIFTYCPSE", "Nifty CPSE", 6475.05, 6428.75, "sector", "POWER"],
+  ["NIFTYPSE", "Nifty PSE", 9775.2, 9743.05, "sector", "POWER"],
+  ["NIFTYMNC", "Nifty MNC", 33128.05, 33211.0, "sector", "FMCG"],
+  ["NIFTYCONSUMP", "Nifty Consumption", 12016.3, 12066.98, "sector", "FMCG"],
+  ["NIFTYSERV", "Nifty Services", 30923.5, 30889.52, "sector", "SERVICES"],
+  ["NIFTYCHEM", "Nifty Chemicals", 30087.5, 30250.85, "sector", "CHEMICALS"],
 ];
 
 const SECTORS = [
   "BANKING",
-  "IT",
-  "PHARMA",
-  "AUTO",
-  "FMCG",
-  "METAL",
-  "ENERGY",
-  "REALTY",
   "PSU BANK",
   "FINANCIAL SERVICES",
+  "INSURANCE",
+  "IT",
+  "PHARMA",
+  "HEALTHCARE",
+  "AUTO",
+  "FMCG",
+  "CONSUMER DURABLES",
+  "METAL",
+  "ENERGY",
+  "OIL & GAS",
+  "POWER",
+  "REALTY",
+  "INFRA",
+  "CAPITAL GOODS",
+  "CEMENT",
+  "TELECOM",
+  "MEDIA",
+  "CHEMICALS",
+  "DEFENCE",
+  "SERVICES",
 ];
 
 const HERO_BUY = new Set(["RELIANCE", "SBIN", "TATAPV", "TATACV", "HINDALCO", "BEL", "TRENT"]);
@@ -127,6 +272,18 @@ const FY_SYMBOL = {
   SENSEX: "BSE:SENSEX-INDEX",
   INDIAVIX: "NSE:INDIAVIX-INDEX",
   FINNIFTY: "NSE:FINNIFTY-INDEX",
+  MIDCAP100: "NSE:NIFTYMIDCAP100-INDEX",
+  MIDCAP50: "NSE:NIFTYMIDCAP50-INDEX",
+  SMALLCAP100: "NSE:NIFTYSMLCAP100-INDEX",
+  SMALLCAP250: "NSE:NIFTYSMLCAP250-INDEX",
+  MICROCAP250: "NSE:NIFTYMICROCAP250-INDEX",
+  NIFTYIT: "NSE:NIFTYIT-INDEX",
+  NIFTYAUTO: "NSE:NIFTYAUTO-INDEX",
+  NIFTYPHARMA: "NSE:NIFTYPHARMA-INDEX",
+  NIFTYFMCG: "NSE:NIFTYFMCG-INDEX",
+  NIFTYMETAL: "NSE:NIFTYMETAL-INDEX",
+  NIFTYENERGY: "NSE:NIFTYENERGY-INDEX",
+  NIFTYREALTY: "NSE:NIFTYREALTY-INDEX",
   TATAPV: "NSE:TMPV-EQ",
   TATACV: "NSE:TMCV-EQ",
   TMPV: "NSE:TMPV-EQ",
@@ -246,10 +403,14 @@ function catalog() {
       sector,
       nifty50: true,
       fno: true,
+      cap: "LARGE",
     });
   }
   for (const [sym, name, close, prev, sector] of EXTRA_FNO) {
-    rows.push({ symbol: sym, name, base: close, prevClose: prev, sector, nifty50: false, fno: true });
+    rows.push({ symbol: sym, name, base: close, prevClose: prev, sector, nifty50: false, fno: true, cap: "MID" });
+  }
+  for (const [sym, name, close, prev, sector, cap] of EXTRA_SECTOR) {
+    rows.push({ symbol: sym, name, base: close, prevClose: prev, sector, nifty50: false, fno: false, cap: cap || "MID" });
   }
   return rows;
 }
@@ -358,13 +519,14 @@ function indexFromMean() {
   return null;
 }
 
-function buildIndex(symbol, name, close, prevClose) {
+function buildIndex(symbol, name, close, prevClose, kind = "broad", sector = "INDEX") {
   const bars = generateBars(symbol, close, "chop");
   return enrich({
     symbol,
     name,
     base: close,
-    sector: "INDEX",
+    sector,
+    kind,
     nifty50: false,
     fno: true,
     bars,
@@ -386,12 +548,26 @@ function sectorCards(rows) {
       const chp = list.reduce((a, b) => a + b.chp, 0) / list.length;
       const rvol = list.reduce((a, b) => a + b.ta.rvol, 0) / list.length;
       const bull = list.filter((x) => x.ta.align.bias === "BULL").length / list.length;
-      const rs = chp - (rows.find((x) => x.symbol === "NIFTY")?.chp || 0);
+      const niftyChp = universe.get("NIFTY")?.chp || 0;
+      const rs = chp - niftyChp;
       let trend = "NEUTRAL";
       if (bull > 0.6 && chp > 0.3) trend = "BULLISH";
       else if (bull < 0.4 && chp < -0.3) trend = "BEARISH";
       const score = Math.max(1, Math.min(10, 5 + chp * 1.4 + (rvol - 1) * 1.2 + rs * 0.8));
-      return { name, chp, rvol, rs, trend, score, n: list.length };
+      const ranked = list.slice().sort((a, b) => b.chp - a.chp);
+      return {
+        name,
+        chp,
+        rvol,
+        rs,
+        trend,
+        score,
+        n: list.length,
+        adv: list.filter((x) => x.chp > 0).length,
+        dec: list.filter((x) => x.chp < 0).length,
+        leaders: ranked.slice(0, 3).map((x) => x.symbol),
+        laggards: ranked.slice(-3).reverse().map((x) => x.symbol),
+      };
     })
     .filter(Boolean);
   cards.sort((a, b) => b.score - a.score);
@@ -409,9 +585,11 @@ function snapshot() {
   const indices = [...universe.values()].filter((r) => r.isIndex);
   return {
     rows,
-    indices,
+    indices: indices.filter((r) => r.kind === "broad"),
+    capIndices: indices.filter((r) => r.kind === "cap"),
+    sectorIndices: indices.filter((r) => r.kind === "sector"),
     regime,
-    sectors: sectorCards([...universe.values()]),
+    sectors: sectorCards(rows),
     live: liveMode && isFyersConnected(),
     demo: !(liveMode && isFyersConnected()),
     frozen: !isCashSessionOpen(),
@@ -429,8 +607,12 @@ function seed() {
   }
   const tmp = [...universe.values()].map((r) => enrich(r));
   for (const r of tmp) universe.set(r.symbol, r);
-  for (const [sym, name, close, prev] of INDICES) {
-    universe.set(sym, buildIndex(sym, name, close, prev));
+  for (const row of [...INDICES, ...CAP_INDICES]) {
+    const [sym, name, close, prev, kind] = row;
+    universe.set(sym, buildIndex(sym, name, close, prev, kind || "broad"));
+  }
+  for (const [sym, name, close, prev, kind, sector] of SECTOR_INDICES) {
+    universe.set(sym, buildIndex(sym, name, close, prev, kind, sector || "INDEX"));
   }
   regime = computeRegime([...universe.values()]);
   for (const [k, v] of universe) universe.set(k, enrich(v));
@@ -508,7 +690,16 @@ export const Market = {
     return all;
   },
   indices() {
-    return ["NIFTY", "BANKNIFTY", "SENSEX", "INDIAVIX"].map((s) => universe.get(s)).filter(Boolean);
+    return ["NIFTY", "BANKNIFTY", "SENSEX", "FINNIFTY", "INDIAVIX"].map((s) => universe.get(s)).filter(Boolean);
+  },
+  capIndices() {
+    return CAP_INDICES.map((r) => universe.get(r[0])).filter(Boolean);
+  },
+  sectorIndices() {
+    return SECTOR_INDICES.map((r) => universe.get(r[0])).filter(Boolean);
+  },
+  getBySector(name) {
+    return [...universe.values()].filter((r) => !r.isIndex && r.sector === name);
   },
   regime() {
     return regime;
