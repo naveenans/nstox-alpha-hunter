@@ -2,7 +2,7 @@
  * Market engine — demo universe, live ticks, regime, sectors.
  * When FYERS is connected, quotes overlay demo bars. CORS failures stay in demo.
  */
-import { Storage, hashStr, mulberry32, getMarketStatus, inr, fmtPct } from "./storage.js";
+import { Storage, hashStr, mulberry32, getMarketStatus, lastSessionCloseMs, inr, fmtPct } from "./storage.js";
 import { analyzeBars } from "./technicals.js";
 import { scoreSymbol, decideSignal } from "./scoring.js";
 import { buildPlan, classicPivots } from "./levels.js";
@@ -169,7 +169,7 @@ function internalFromFy(n) {
 }
 
 function isCashSessionOpen() {
-  return getMarketStatus().code === "OPEN";
+  return getMarketStatus().open === true;
 }
 
 function makeBar(t, o, r) {
@@ -184,10 +184,11 @@ function makeBar(t, o, r) {
 }
 
 function generateBars(symbol, base, bias, n = 160) {
-  const rand = mulberry32(hashStr(symbol + ":bars:v3"));
+  const rand = mulberry32(hashStr(symbol + ":bars:v4"));
   const bars = [];
+  const end = getMarketStatus().open ? Math.floor(Date.now() / 300000) * 300000 : lastSessionCloseMs();
+  const t0 = end - (n - 1) * 5 * 60 * 1000;
   let px = base * (0.985 + rand() * 0.02);
-  const t0 = Date.now() - n * 5 * 60 * 1000;
   for (let i = 0; i < n; i++) {
     let local = bias;
     if (i > n - 28 && HERO_BUY.has(symbol)) local = "bull";
@@ -210,6 +211,7 @@ function generateBars(symbol, base, bias, n = 160) {
 }
 
 function tickBar(bar, bias, rand) {
+  if (!isCashSessionOpen()) return bar;
   const tilt = bias === "bull" ? 0.00025 : bias === "bear" ? -0.00025 : 0;
   const d = (rand() - 0.5) * 0.0018 + tilt;
   const c = bar.c * (1 + d);

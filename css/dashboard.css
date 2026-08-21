@@ -124,3 +124,7 @@
   min-height: 36px;
 }
 .tf-bar button.on { color: var(--gold-hi); border-color: var(--gold); }
+
+.scan-table tr.here td { background: rgba(201,162,39,0.08); }
+.scan-table tr.here b { color: var(--gold-hi); }
+.opt-hero .top-opt { min-width: 180px; }

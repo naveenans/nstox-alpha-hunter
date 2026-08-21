@@ -269,38 +269,51 @@ export function mulberry32(seed) {
 }
 
 export function nowIST() {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    weekday: "short",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date());
-  const g = (t) => parts.find((p) => p.type === t)?.value;
+  const iso = new Date().toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" });
+  const [date, time] = iso.split(" ");
+  const [year, month, day] = date.split("-").map(Number);
+  const [h, m, s] = time.split(":").map(Number);
+  const wd = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  const names = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   return {
-    h: +g("hour"),
-    m: +g("minute"),
-    s: +g("second"),
-    w: g("weekday"),
-    date: `${g("year")}-${g("month")}-${g("day")}`,
-    clock: `${g("hour")}:${g("minute")}:${g("second")}`,
+    h,
+    m,
+    s,
+    w: names[wd],
+    wd,
+    date,
+    clock: time,
+    year,
+    month,
+    day,
   };
 }
 
 export function getMarketStatus() {
-  const { h, m, w } = nowIST();
-  const mins = h * 60 + m;
-  const weekend = w === "Sat" || w === "Sun";
-  if (weekend) return { code: "CLOSED", label: "MARKET CLOSED", session: "Weekend" };
-  if (mins >= 9 * 60 && mins < 9 * 60 + 15)
-    return { code: "PRE", label: "PRE-MARKET", session: "09:00–09:15 IST" };
-  if (mins >= 9 * 60 + 15 && mins < 15 * 60 + 30)
-    return { code: "OPEN", label: "MARKET OPEN", session: "09:15–15:30 IST" };
-  return { code: "CLOSED", label: "MARKET CLOSED", session: "Opens 09:15 IST" };
+  const t = nowIST();
+  const mins = t.h * 60 + t.m;
+  if (t.wd === 0 || t.wd === 6) {
+    return { code: "CLOSED", label: "MARKET CLOSED", session: "Weekend", open: false };
+  }
+  if (mins >= 9 * 60 && mins < 9 * 60 + 15) {
+    return { code: "PRE", label: "PRE-MARKET", session: "09:00–09:15 IST", open: false };
+  }
+  if (mins >= 9 * 60 + 15 && mins < 15 * 60 + 30) {
+    return { code: "OPEN", label: "MARKET OPEN", session: "09:15–15:30 IST", open: true };
+  }
+  return { code: "CLOSED", label: "MARKET CLOSED", session: "Opens 09:15 IST", open: false };
+}
+
+export function lastSessionCloseMs() {
+  const t = nowIST();
+  const dt = new Date(Date.UTC(t.year, t.month - 1, t.day));
+  let wd = dt.getUTCDay();
+  const mins = t.h * 60 + t.m;
+  const afterClose = mins >= 15 * 60 + 30;
+  if (wd === 0) dt.setUTCDate(dt.getUTCDate() - 2);
+  else if (wd === 6) dt.setUTCDate(dt.getUTCDate() - 1);
+  else if (!afterClose) dt.setUTCDate(dt.getUTCDate() - (wd === 1 ? 3 : 1));
+  return Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate(), 9, 55, 0);
 }
 
 export function debounce(fn, ms) {

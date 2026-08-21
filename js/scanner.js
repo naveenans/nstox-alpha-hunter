@@ -280,7 +280,7 @@ export function renderScanner(root) {
   root.querySelector("#scan-start").onclick = () => Scanner.start();
   root.querySelector("#scan-stop").onclick = () => Scanner.stop();
   root.querySelector("#scan-refresh").onclick = () => {
-    Market.refresh();
+    if (!Market.isFrozen()) Market.refresh();
     lastScanAt = Date.now();
     patch();
   };
@@ -305,7 +305,7 @@ export const Scanner = {
     running = true;
     const tick = () => {
       lastScanAt = Date.now();
-      Market.refresh();
+      if (!Market.isFrozen()) Market.refresh();
       const rows = filteredRows();
       Alerts.ingest(rows);
       window.dispatchEvent(new CustomEvent("nstox:scan", { detail: { n: rows.length, running } }));

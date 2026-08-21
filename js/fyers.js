@@ -317,8 +317,8 @@ export async function getHistoricalData({ symbol, resolution = "5", rangeFrom, r
   }));
 }
 
-export async function getOptionChain({ symbol, strikecount = 10, timestamp } = {}) {
-  const q = new URLSearchParams({ symbol, strikecount: String(strikecount) });
+export async function getOptionChain({ symbol, strikecount = 16, timestamp } = {}) {
+  const q = new URLSearchParams({ symbol, strikecount: String(strikecount), greeks: "1" });
   if (timestamp) q.set("timestamp", String(timestamp));
   const json = await fyersFetch(
     `/api/fyers/option-chain?${q}`,
