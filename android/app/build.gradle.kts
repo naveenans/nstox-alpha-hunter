@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "in.nstox.alpha"
+    namespace = "com.nstox.alpha"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "in.nstox.alpha"
+        applicationId = "com.nstox.alpha"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
