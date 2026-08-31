@@ -1,9 +1,8 @@
-package in.nstox.alpha
+package com.nstox.alpha
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -60,20 +59,25 @@ fun NstoxApp() {
             containerColor = Bg,
             bottomBar = {
                 NavigationBar(containerColor = Color(0xFF080C19)) {
+                    val destinations = listOf(0, 3, 5, 7)
                     listOf("Markets", "Flows", "Scanner", "AI").forEachIndexed { i, label ->
+                        val isSelected = when (i) {
+                            0 -> selected <= 2
+                            1 -> selected in 3..4
+                            2 -> selected in 5..6
+                            else -> selected == 7
+                        }
                         NavigationBarItem(
-                            selected = when (i) { 0 -> selected <= 2; 1 -> selected in 3..4; 2 -> selected in 5..6; else -> selected == 7 },
-                            onClick = { selected = listOf(0,3,5,7)[i] },
-                            icon = { Text(listOf("◈","₹","⌁","✦")[i], color = if (selected == listOf(0,3,5,7)[i]) Neon else TextMuted) },
+                            selected = isSelected,
+                            onClick = { selected = destinations[i] },
+                            icon = { Text(listOf("◈", "₹", "⌁", "✦")[i], color = if (isSelected) Neon else TextMuted) },
                             label = { Text(label, fontSize = 10.sp) }
                         )
                     }
                 }
             }
         ) { padding ->
-            Column(
-                Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp)
-            ) {
+            Column(Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp)) {
                 Spacer(Modifier.height(12.dp))
                 BrandHeader(sections[selected].title)
                 Spacer(Modifier.height(14.dp))
@@ -93,7 +97,7 @@ private fun BrandHeader(screen: String) {
             Text(screen.uppercase(), color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
         }
         Surface(color = Color(0xFF10223A), shape = RoundedCornerShape(20.dp)) {
-            Text("LIVE", color = Positive, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp), fontSize = 11.sp)
+            Text("DATA", color = Neon, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp), fontSize = 11.sp)
         }
     }
 }
@@ -122,7 +126,7 @@ private fun DashboardScreen(section: DashboardSection, index: Int) {
         item { HeroCard(section, index) }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                MiniMetric("STATUS", if (index == 7) "AI READY" else "CONNECTED", Neon, Modifier.weight(1f))
+                MiniMetric("STATUS", if (index == 7) "AI READY" else "API READY", Neon, Modifier.weight(1f))
                 MiniMetric("REFRESH", "ON DEMAND", Blue, Modifier.weight(1f))
             }
         }
@@ -190,15 +194,37 @@ private fun DataRow(name: String, value: String, change: String) {
     }
 }
 
-private fun screenRows(index: Int): List<Triple<String,String,String>> = when(index) {
-    0 -> listOf("Dow Jones" to "—" to "Awaiting API", "NASDAQ" to "—" to "Awaiting API", "Nikkei 225" to "—" to "Awaiting API", "Hang Seng" to "—" to "Awaiting API")
-    1 -> listOf("NIFTY 50" to "—" to "Awaiting API", "BANK NIFTY" to "—" to "Awaiting API", "SENSEX" to "—" to "Awaiting API", "NIFTY MIDCAP" to "—" to "Awaiting API")
-    2 -> listOf("Top Gainer" to "—" to "Rank #1", "Top Gainer" to "—" to "Rank #2", "Top Loser" to "—" to "Rank #1", "Top Loser" to "—" to "Rank #2")
-    3 -> listOf("FII Cash" to "—" to "Net value", "DII Cash" to "—" to "Net value", "FII Buy" to "—" to "Gross", "DII Buy" to "—" to "Gross")
-    4 -> listOf("Block Deal" to "—" to "Exchange feed", "Bulk Deal" to "—" to "Exchange feed", "Largest Value" to "—" to "Today", "Most Active" to "—" to "Today")
-    5 -> listOf("Volume Shocker" to "—" to "> baseline", "Delivery Spike" to "—" to "Scanner", "Price + Volume" to "—" to "Scanner", "Turnover Spike" to "—" to "Scanner")
-    6 -> listOf("Near 52W High" to "—" to "≤ 2% away", "Fresh Breakout" to "—" to "Today", "High Volume Breakout" to "—" to "Confirmed", "Watchlist" to "—" to "Saved")
-    else -> listOf("Breaking" to "—" to "Source scored", "Earnings" to "—" to "Ticker mapped", "Regulatory" to "—" to "High priority", "Social Pulse" to "—" to "Unverified until sourced")
+private fun screenRows(index: Int): List<Triple<String, String, String>> = when (index) {
+    0 -> listOf(
+        Triple("Dow Jones", "—", "Awaiting API"), Triple("NASDAQ", "—", "Awaiting API"),
+        Triple("Nikkei 225", "—", "Awaiting API"), Triple("Hang Seng", "—", "Awaiting API")
+    )
+    1 -> listOf(
+        Triple("NIFTY 50", "—", "Awaiting API"), Triple("BANK NIFTY", "—", "Awaiting API"),
+        Triple("SENSEX", "—", "Awaiting API"), Triple("NIFTY MIDCAP", "—", "Awaiting API")
+    )
+    2 -> listOf(
+        Triple("Top Gainer", "—", "Rank #1"), Triple("Top Gainer", "—", "Rank #2"),
+        Triple("Top Loser", "—", "Rank #1"), Triple("Top Loser", "—", "Rank #2")
+    )
+    3 -> listOf(
+        Triple("FII Cash", "—", "Net value"), Triple("DII Cash", "—", "Net value"),
+        Triple("FII Buy", "—", "Gross"), Triple("DII Buy", "—", "Gross")
+    )
+    4 -> listOf(
+        Triple("Block Deal", "—", "Exchange feed"), Triple("Bulk Deal", "—", "Exchange feed"),
+        Triple("Largest Value", "—", "Today"), Triple("Most Active", "—", "Today")
+    )
+    5 -> listOf(
+        Triple("Volume Shocker", "—", "> baseline"), Triple("Delivery Spike", "—", "Scanner"),
+        Triple("Price + Volume", "—", "Scanner"), Triple("Turnover Spike", "—", "Scanner")
+    )
+    6 -> listOf(
+        Triple("Near 52W High", "—", "≤ 2% away"), Triple("Fresh Breakout", "—", "Today"),
+        Triple("High Volume Breakout", "—", "Confirmed"), Triple("Watchlist", "—", "Saved")
+    )
+    else -> listOf(
+        Triple("Breaking", "—", "Source scored"), Triple("Earnings", "—", "Ticker mapped"),
+        Triple("Regulatory", "—", "High priority"), Triple("Social Pulse", "—", "Unverified until sourced")
+    )
 }
-
-private infix fun Pair<String,String>.to(third: String) = Triple(first, second, third)
