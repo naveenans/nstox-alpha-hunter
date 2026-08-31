@@ -98,9 +98,9 @@ object MarketRepository {
     )
 
     private val fiiServers = listOf(
-        "https://chirag127.github.io/fii-dii-activity-api/data/latest.json" to "FII/DII GitHub Pages",
-        "https://raw.githubusercontent.com/chirag127/fii-dii-activity-api/main/data/latest.json" to "FII/DII GitHub Raw",
-        "https://cdn.jsdelivr.net/gh/chirag127/fii-dii-activity-api@main/data/latest.json" to "FII/DII jsDelivr"
+        "https://chirag127.github.io/fii-dii-activity-api/data/latest.json" to "GitHub Pages",
+        "https://raw.githubusercontent.com/chirag127/fii-dii-activity-api/main/data/latest.json" to "GitHub Raw",
+        "https://cdn.jsdelivr.net/gh/chirag127/fii-dii-activity-api@main/data/latest.json" to "jsDelivr"
     )
 
     private val newsFeeds = listOf(
@@ -112,9 +112,9 @@ object MarketRepository {
     suspend fun loadSnapshot(): MarketSnapshot = withContext(Dispatchers.IO) {
         try {
             coroutineScope {
-                val indicesJob = async { fetchUniverse(indexUniverse) }
-                val stocksJob = async { fetchUniverse(nifty50) }
-                val commodityJob = async { fetchUniverse(commodityUniverse) }
+                val indicesJob = async { fetchUniverse(indexUniverse, false) }
+                val stocksJob = async { fetchUniverse(nifty50, true) }
+                val commodityJob = async { fetchUniverse(commodityUniverse, false) }
                 val flowJob = async { fetchInstitutionalFlow() }
                 val newsJob = async { fetchNews() }
                 val indices = indicesJob.await()
@@ -134,19 +134,20 @@ object MarketRepository {
         }
     }
 
-    private suspend fun fetchUniverse(universe: List<Pair<String, String>>): List<MarketQuote> = coroutineScope {
+    private suspend fun fetchUniverse(universe: List<Pair<String, String>>, needsDailyVolume: Boolean): List<MarketQuote> = coroutineScope {
         val results = mutableListOf<MarketQuote>()
-        universe.chunked(8).forEach { chunk ->
-            results += chunk.map { (symbol, name) -> async(Dispatchers.IO) { runCatching { fetchYahooDay(symbol, name) }.getOrNull() } }
-                .awaitAll().filterNotNull()
+        universe.chunked(6).forEach { chunk ->
+            results += chunk.map { (symbol, name) ->
+                async(Dispatchers.IO) { runCatching { fetchYahooDay(symbol, name, needsDailyVolume) }.getOrNull() }
+            }.awaitAll().filterNotNull()
         }
         results
     }
 
-    private fun fetchYahooDay(symbol: String, name: String): MarketQuote {
+    private fun fetchYahooDay(symbol: String, name: String, needsDailyVolume: Boolean): MarketQuote {
         val encoded = URLEncoder.encode(symbol, StandardCharsets.UTF_8.toString())
         val endpoint = "https://query1.finance.yahoo.com/v8/finance/chart/$encoded?interval=5m&range=1d&includePrePost=false"
-        val root = JSONObject(httpGet(endpoint, "Mozilla/5.0 NSTOX-ALPHA/0.4"))
+        val root = JSONObject(httpGet(endpoint, "Mozilla/5.0 NSTOX-ALPHA/0.5"))
         val result = root.getJSONObject("chart").getJSONArray("result").getJSONObject(0)
         val meta = result.getJSONObject("meta")
         val quote = result.getJSONObject("indicators").getJSONArray("quote").getJSONObject(0)
@@ -156,25 +157,52 @@ object MarketRepository {
         var intradayVolume = 0L
         for (i in 0 until closesJson.length()) if (!closesJson.isNull(i)) closes += closesJson.optDouble(i)
         for (i in 0 until volumesJson.length()) if (!volumesJson.isNull(i)) intradayVolume += volumesJson.optLong(i)
+
         val price = meta.optDouble("regularMarketPrice", closes.lastOrNull() ?: 0.0)
         val previous = meta.optDouble("chartPreviousClose", meta.optDouble("previousClose", price))
         val changeValue = price - previous
         val changePct = if (previous != 0.0) changeValue / previous * 100.0 else 0.0
-        val regularVolume = meta.optLong("regularMarketVolume", intradayVolume)
-        val avgVolume = meta.optDouble("averageDailyVolume10Day", meta.optDouble("averageDailyVolume3Month", 0.0))
+        val regularVolume = meta.optLong("regularMarketVolume", intradayVolume).takeIf { it > 0 } ?: intradayVolume
+        val avgVolume20 = if (needsDailyVolume) fetchDailyAverageVolume(encoded) else 0.0
+
         return MarketQuote(
-            symbol, name, price, changePct, changeValue, regularVolume, avgVolume,
-            meta.optDouble("fiftyTwoWeekHigh", 0.0), meta.optDouble("fiftyTwoWeekLow", 0.0),
-            closes.takeLast(50), "Yahoo Finance • 1D/5m"
+            symbol = symbol,
+            name = name,
+            price = price,
+            changePct = changePct,
+            changeValue = changeValue,
+            volume = regularVolume,
+            avgVolume20 = avgVolume20,
+            yearHigh = meta.optDouble("fiftyTwoWeekHigh", 0.0),
+            yearLow = meta.optDouble("fiftyTwoWeekLow", 0.0),
+            history = closes.takeLast(60),
+            source = "Yahoo Finance"
         )
+    }
+
+    private fun fetchDailyAverageVolume(encodedSymbol: String): Double {
+        return runCatching {
+            val endpoint = "https://query1.finance.yahoo.com/v8/finance/chart/$encodedSymbol?interval=1d&range=1mo&includePrePost=false"
+            val root = JSONObject(httpGet(endpoint, "Mozilla/5.0 NSTOX-ALPHA/0.5"))
+            val result = root.getJSONObject("chart").getJSONArray("result").getJSONObject(0)
+            val quote = result.getJSONObject("indicators").getJSONArray("quote").getJSONObject(0)
+            val volumesJson = quote.getJSONArray("volume")
+            val volumes = mutableListOf<Long>()
+            for (i in 0 until volumesJson.length()) if (!volumesJson.isNull(i)) {
+                val v = volumesJson.optLong(i)
+                if (v > 0) volumes += v
+            }
+            val baseline = volumes.dropLast(1).takeLast(20)
+            if (baseline.isNotEmpty()) baseline.average() else volumes.takeLast(20).average()
+        }.getOrDefault(0.0)
     }
 
     private fun fetchInstitutionalFlow(): InstitutionalFlow? {
         for ((url, label) in fiiServers) {
             val flow = runCatching {
-                val root = JSONObject(httpGet(url, "NSTOX-ALPHA/0.4"))
+                val root = JSONObject(httpGet(url, "NSTOX-ALPHA/0.5"))
                 val eq = root.getJSONObject("equity")
-                val source = root.optString("source", "unknown")
+                val source = root.optString("source", "public")
                 if (source.equals("placeholder", true)) error("placeholder data")
                 InstitutionalFlow(
                     date = root.optString("date", "—"),
@@ -191,7 +219,7 @@ object MarketRepository {
     private fun fetchNews(): List<NewsItem> {
         val all = mutableListOf<NewsItem>()
         newsFeeds.forEach { (url, source, hint) ->
-            runCatching { all += parseRss(httpGet(url, "Mozilla/5.0 NSTOX-ALPHA/0.4"), source, hint) }
+            runCatching { all += parseRss(httpGet(url, "Mozilla/5.0 NSTOX-ALPHA/0.5"), source, hint) }
         }
         return all.distinctBy { normalizeTitle(it.title) }.take(24)
     }
@@ -227,7 +255,8 @@ object MarketRepository {
         val t = text.lowercase()
         val positive = listOf("rally", "gain", "surge", "record", "upgrade", "beats", "profit", "buy", "growth", "high")
         val negative = listOf("fall", "drop", "crash", "selloff", "downgrade", "loss", "fraud", "weak", "slump", "low")
-        val p = positive.count { it in t }; val n = negative.count { it in t }
+        val p = positive.count { it in t }
+        val n = negative.count { it in t }
         return when { p > n -> "POSITIVE"; n > p -> "NEGATIVE"; else -> "NEUTRAL" }
     }
 
