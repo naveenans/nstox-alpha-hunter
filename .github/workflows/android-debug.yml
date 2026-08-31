@@ -3,7 +3,10 @@ name: Android Debug APK
 on:
   workflow_dispatch:
   push:
-    branches: ["feature/nstox-alpha-android"]
+    branches: ["main", "feature/nstox-alpha-android"]
+    paths: ["android/**", ".github/workflows/android-debug.yml"]
+  pull_request:
+    branches: ["main"]
     paths: ["android/**", ".github/workflows/android-debug.yml"]
 
 jobs:
