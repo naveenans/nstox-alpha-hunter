@@ -1,0 +1,2 @@
+NSTOX ALPHA Android CI trigger
+Generated to start APK build for feature/nstox-alpha-android.
