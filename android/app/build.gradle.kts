@@ -17,6 +17,11 @@ android {
         buildConfigField("String", "ALPHA_VANTAGE_KEY", "\"${System.getenv("ALPHA_VANTAGE_KEY") ?: "demo"}\"")
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -25,6 +30,10 @@ android {
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
