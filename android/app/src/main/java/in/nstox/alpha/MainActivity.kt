@@ -44,6 +44,32 @@ private val TextMuted = Color(0xFF8A98AD)
 private val TextSoft = Color(0xFFC8D2E2)
 
 data class DashboardSection(val title: String, val subtitle: String, val icon: String)
+data class GlobalSpec(val symbol: String, val name: String, val flag: String)
+data class CommoditySpec(val symbol: String, val name: String, val icon: String)
+
+private val globalSpecs = listOf(
+    GlobalSpec("NIFTY=F", "GIFT Nifty", "🇮🇳"),
+    GlobalSpec("^IXIC", "NASDAQ", "🇺🇸"),
+    GlobalSpec("^DJI", "Dow Jones", "🇺🇸"),
+    GlobalSpec("^GSPC", "S&P 500", "🇺🇸"),
+    GlobalSpec("^GDAXI", "DAX", "🇩🇪"),
+    GlobalSpec("^FTSE", "FTSE 100", "🇬🇧"),
+    GlobalSpec("^HSI", "Hang Seng", "🇭🇰"),
+    GlobalSpec("^N225", "Nikkei 225", "🇯🇵"),
+    GlobalSpec("^TWII", "Taiwan", "🇹🇼"),
+    GlobalSpec("^AXJO", "ASX 200", "🇦🇺"),
+    GlobalSpec("^FCHI", "CAC 40", "🇫🇷"),
+    GlobalSpec("IMOEX.ME", "Russia MOEX", "🇷🇺")
+)
+
+private val commoditySpecs = listOf(
+    CommoditySpec("CL=F", "Crude Oil", "🛢"),
+    CommoditySpec("BZ=F", "Brent Oil", "◉"),
+    CommoditySpec("GC=F", "Gold", "◆"),
+    CommoditySpec("SI=F", "Silver", "◇"),
+    CommoditySpec("HG=F", "Copper", "⬡"),
+    CommoditySpec("NG=F", "Natural Gas", "♨")
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,8 +82,9 @@ class MainActivity : ComponentActivity() {
 fun NstoxApp() {
     val sections = remember {
         listOf(
-            DashboardSection("Global Indices", "US • Europe • Asia", "◎"),
+            DashboardSection("Global Indices", "World market command center", "◎"),
             DashboardSection("Indian Indices", "NIFTY • BANK NIFTY • SENSEX", "◆"),
+            DashboardSection("Commodities", "Energy • Metals", "◈"),
             DashboardSection("Top Movers", "Gainers • Losers • Breadth", "↕"),
             DashboardSection("FII & DII", "Institutional cash flow", "₹"),
             DashboardSection("Block & Bulk", "Large reported deals", "▦"),
@@ -79,36 +106,25 @@ fun NstoxApp() {
         }
     }
 
-    MaterialTheme(
-        colorScheme = darkColorScheme(background = Bg, surface = Panel, primary = Cyan, secondary = Pink)
-    ) {
+    MaterialTheme(colorScheme = darkColorScheme(background = Bg, surface = Panel, primary = Cyan, secondary = Pink)) {
         Box(
-            Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(Color(0xFF06101E), Bg, Color(0xFF02050B))
-                    )
-                )
+            Modifier.fillMaxSize().background(
+                Brush.verticalGradient(listOf(Color(0xFF06101E), Bg, Color(0xFF02050B)))
+            )
         ) {
             Scaffold(
                 containerColor = Color.Transparent,
                 bottomBar = { BottomNav(selected) { selected = it } }
             ) { padding ->
                 Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .padding(horizontal = 14.dp)
+                    Modifier.fillMaxSize().padding(padding).padding(horizontal = 14.dp)
                 ) {
                     Spacer(Modifier.height(10.dp))
                     BrandHeader(sections[selected].title, snapshot, loading)
                     Spacer(Modifier.height(10.dp))
                     DashboardTabs(sections, selected) { selected = it }
                     Spacer(Modifier.height(10.dp))
-                    DashboardBody(sections[selected], selected, snapshot, loading) {
-                        loading = true
-                    }
+                    DashboardBody(sections[selected], selected, snapshot, loading)
                 }
             }
         }
@@ -117,14 +133,14 @@ fun NstoxApp() {
 
 @Composable
 private fun BottomNav(selected: Int, onSelect: (Int) -> Unit) {
-    val destinations = listOf(0, 3, 5, 7)
+    val destinations = listOf(0, 4, 6, 8)
     NavigationBar(containerColor = Color(0xEE070C16), tonalElevation = 0.dp) {
         listOf("Markets", "Flows", "Scanner", "AI").forEachIndexed { i, label ->
             val active = when (i) {
-                0 -> selected <= 2
-                1 -> selected in 3..4
-                2 -> selected in 5..6
-                else -> selected == 7
+                0 -> selected in 0..3
+                1 -> selected in 4..5
+                2 -> selected in 6..7
+                else -> selected == 8
             }
             NavigationBarItem(
                 selected = active,
@@ -147,20 +163,9 @@ private fun BottomNav(selected: Int, onSelect: (Int) -> Unit) {
 private fun BrandHeader(screen: String, snapshot: MarketSnapshot, loading: Boolean) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
-            Text(
-                "NSTOX ALPHA",
-                color = Color.White,
-                fontWeight = FontWeight.Black,
-                fontSize = 22.sp,
-                letterSpacing = 1.5.sp
-            )
+            Text("NSTOX ALPHA", color = Color.White, fontWeight = FontWeight.Black, fontSize = 22.sp, letterSpacing = 1.5.sp)
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    Modifier
-                        .size(7.dp)
-                        .clip(CircleShape)
-                        .background(if (snapshot.error == null) Green else Red)
-                )
+                Box(Modifier.size(7.dp).clip(CircleShape).background(if (snapshot.error == null) Green else Red))
                 Spacer(Modifier.width(6.dp))
                 Text(screen.uppercase(), color = Cyan, fontWeight = FontWeight.Bold, fontSize = 10.sp)
             }
@@ -191,8 +196,7 @@ private fun DashboardTabs(sections: List<DashboardSection>, selected: Int, onSel
         itemsIndexed(sections) { index, item ->
             val active = selected == index
             Box(
-                Modifier
-                    .clip(RoundedCornerShape(13.dp))
+                Modifier.clip(RoundedCornerShape(13.dp))
                     .background(if (active) Brush.horizontalGradient(listOf(Pink.copy(.24f), Cyan.copy(.20f))) else Brush.horizontalGradient(listOf(Panel2, Panel2)))
                     .border(1.dp, if (active) Cyan.copy(.45f) else Color.White.copy(.06f), RoundedCornerShape(13.dp))
                     .padding(horizontal = 11.dp, vertical = 9.dp)
@@ -210,85 +214,201 @@ private fun DashboardTabs(sections: List<DashboardSection>, selected: Int, onSel
 }
 
 private fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier =
-    this.then(Modifier.clip(RoundedCornerShape(13.dp))).then(androidx.compose.foundation.clickable(onClick = onClick))
+    this.then(androidx.compose.foundation.clickable(onClick = onClick))
 
 @Composable
-private fun DashboardBody(
-    section: DashboardSection,
-    index: Int,
-    snapshot: MarketSnapshot,
-    loading: Boolean,
-    onRefresh: () -> Unit
-) {
-    val global = snapshot.indices.filter { it.symbol !in setOf("^NSEI", "^NSEBANK", "^BSESN") }
+private fun DashboardBody(section: DashboardSection, index: Int, snapshot: MarketSnapshot, loading: Boolean) {
     val indian = snapshot.indices.filter { it.symbol in setOf("^NSEI", "^NSEBANK", "^BSESN") }
     val gainers = snapshot.stocks.sortedByDescending { it.changePct }.take(7)
     val losers = snapshot.stocks.sortedBy { it.changePct }.take(7)
     val volume = snapshot.stocks.filter { it.volumeRatio > 0 }.sortedByDescending { it.volumeRatio }.take(10)
     val breakouts = snapshot.stocks.filter { it.distanceToHighPct >= -0.5 }.sortedBy { it.distanceToHighPct }.take(10)
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        contentPadding = PaddingValues(bottom = 22.dp)
-    ) {
-        item { MarketHero(section, snapshot, loading) }
-        item { BreadthStrip(snapshot) }
-
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(bottom = 22.dp)) {
         when (index) {
             0 -> {
-                item { SectionTitle("GLOBAL MARKET PULSE", "Live index cards with 1Y context") }
-                items(global) { NeonQuoteCard(it) }
+                item { GlobalHeaderCard(loading) }
+                item { SectionTitle("GLOBAL INDICES", "12 major markets • country flags • 2-column grid") }
+                item { GlobalGrid(snapshot.indices) }
             }
             1 -> {
+                item { MarketHero(section, snapshot, loading) }
+                item { BreadthStrip(snapshot) }
                 item { SectionTitle("INDIA MARKET CORE", "NIFTY • BANK NIFTY • SENSEX") }
-                items(indian) { NeonQuoteCard(it, accent = Yellow) }
+                items(indian) { NeonQuoteCard(it, Yellow) }
                 item { SectorBreadthPanel(snapshot.stocks) }
             }
             2 -> {
+                item { CommodityHeaderCard(loading) }
+                item { SectionTitle("COMMODITIES", "Energy and metals • 2 columns × 3 rows") }
+                item { CommodityGrid(snapshot.commodities) }
+            }
+            3 -> {
+                item { MarketHero(section, snapshot, loading) }
+                item { BreadthStrip(snapshot) }
                 item { SectionTitle("TOP GAINERS", "NIFTY 50 universe") }
                 items(gainers) { CompactMoverRow(it, true) }
                 item { SectionTitle("TOP LOSERS", "NIFTY 50 universe") }
                 items(losers) { CompactMoverRow(it, false) }
             }
-            3 -> {
-                item { InstitutionalPanel() }
-            }
-            4 -> {
-                item { DealsPanel() }
-            }
-            5 -> {
+            4 -> item { InstitutionalPanel() }
+            5 -> item { DealsPanel() }
+            6 -> {
+                item { MarketHero(section, snapshot, loading) }
                 item { SectionTitle("VOLUME SHOCKERS", "Current volume ÷ 20-session average") }
                 items(volume) { VolumeRow(it) }
             }
-            6 -> {
+            7 -> {
+                item { MarketHero(section, snapshot, loading) }
                 item { SectionTitle("52-WEEK PROXIMITY", "Closest names to computed 1Y highs") }
                 items(breakouts) { BreakoutRow(it) }
             }
-            else -> {
-                item { AiNewsPanel() }
-            }
+            else -> item { AiNewsPanel() }
         }
 
-        if (snapshot.error != null) {
-            item { StatusCard("DATA FEED", snapshot.error, Red) }
-        }
+        snapshot.error?.let { item { StatusCard("DATA FEED", it, Red) } }
         item { SourceFooter() }
     }
 }
 
 @Composable
+private fun GlobalHeaderCard(loading: Boolean) {
+    NeonPanel(Cyan) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text("◎", color = Yellow, fontSize = 25.sp)
+                Text("WORLD MARKET WALL", color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Black)
+                Text("US • Europe • Asia • India futures", color = TextMuted, fontSize = 10.sp)
+            }
+            StatusPill(if (loading) "SYNC" else "LIVE GRID", if (loading) Yellow else Green)
+        }
+    }
+}
+
+@Composable
+private fun CommodityHeaderCard(loading: Boolean) {
+    NeonPanel(Yellow) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text("◈", color = Pink, fontSize = 25.sp)
+                Text("COMMODITY DESK", color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Black)
+                Text("Oil • Bullion • Base metals • Gas", color = TextMuted, fontSize = 10.sp)
+            }
+            StatusPill(if (loading) "SYNC" else "AUTO 15M", if (loading) Yellow else Green)
+        }
+    }
+}
+
+@Composable
+private fun GlobalGrid(quotes: List<MarketQuote>) {
+    Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
+        globalSpecs.chunked(2).forEach { rowSpecs ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(9.dp)) {
+                rowSpecs.forEach { spec ->
+                    val quote = quotes.firstOrNull { it.symbol == spec.symbol }
+                    GlobalMarketCard(spec, quote, Modifier.weight(1f))
+                }
+                if (rowSpecs.size == 1) Spacer(Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun GlobalMarketCard(spec: GlobalSpec, q: MarketQuote?, modifier: Modifier = Modifier) {
+    val change = q?.changePct ?: 0.0
+    val accent = if (q == null) TextMuted else signColor(change)
+    Column(
+        modifier.height(137.dp).clip(RoundedCornerShape(18.dp))
+            .background(Brush.linearGradient(listOf(accent.copy(.12f), Panel2, Panel)))
+            .border(1.dp, accent.copy(.24f), RoundedCornerShape(18.dp))
+            .padding(11.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(spec.flag, fontSize = 22.sp)
+            Spacer(Modifier.width(7.dp))
+            Column(Modifier.weight(1f)) {
+                Text(spec.name, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Black, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(spec.symbol, color = TextMuted, fontSize = 7.sp)
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        Text(q?.let { formatPrice(it.price) } ?: "—", color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Black)
+        Text(q?.let { formatPct(it.changePct) } ?: "FEED WAIT", color = if (q == null) TextMuted else accent, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(5.dp))
+        Sparkline(q?.history ?: emptyList(), accent, Modifier.fillMaxWidth().height(32.dp))
+    }
+}
+
+@Composable
+private fun CommodityGrid(quotes: List<MarketQuote>) {
+    Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
+        commoditySpecs.chunked(2).forEach { rowSpecs ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(9.dp)) {
+                rowSpecs.forEach { spec ->
+                    val quote = quotes.firstOrNull { it.symbol == spec.symbol }
+                    CommodityCard(spec, quote, Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CommodityCard(spec: CommoditySpec, q: MarketQuote?, modifier: Modifier = Modifier) {
+    val change = q?.changePct ?: 0.0
+    val accent = when (spec.symbol) {
+        "GC=F" -> Yellow
+        "SI=F" -> Cyan
+        "HG=F" -> Pink
+        "NG=F" -> Violet
+        else -> if (q == null) TextMuted else signColor(change)
+    }
+    Column(
+        modifier.height(148.dp).clip(RoundedCornerShape(18.dp))
+            .background(Brush.linearGradient(listOf(accent.copy(.13f), Panel2, Panel)))
+            .border(1.dp, accent.copy(.27f), RoundedCornerShape(18.dp))
+            .padding(12.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                Modifier.size(36.dp).clip(RoundedCornerShape(11.dp))
+                    .background(accent.copy(.16f)).border(1.dp, accent.copy(.35f), RoundedCornerShape(11.dp)),
+                contentAlignment = Alignment.Center
+            ) { Text(spec.icon, color = accent, fontSize = 17.sp, fontWeight = FontWeight.Black) }
+            Spacer(Modifier.width(8.dp))
+            Column(Modifier.weight(1f)) {
+                Text(spec.name, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Black, maxLines = 1)
+                Text(spec.symbol, color = TextMuted, fontSize = 7.sp)
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        Text(q?.let { formatPrice(it.price) } ?: "—", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Black)
+        Text(q?.let { formatPct(it.changePct) } ?: "FEED WAIT", color = if (q == null) TextMuted else signColor(change), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(5.dp))
+        Sparkline(q?.history ?: emptyList(), accent, Modifier.fillMaxWidth().height(31.dp))
+    }
+}
+
+@Composable
+private fun StatusPill(text: String, color: Color) {
+    Box(
+        Modifier.clip(RoundedCornerShape(20.dp)).background(color.copy(.10f))
+            .border(1.dp, color.copy(.30f), RoundedCornerShape(20.dp)).padding(horizontal = 10.dp, vertical = 7.dp)
+    ) { Text(text, color = color, fontSize = 9.sp, fontWeight = FontWeight.Black) }
+}
+
+@Composable
 private fun MarketHero(section: DashboardSection, snapshot: MarketSnapshot, loading: Boolean) {
     val lead = snapshot.indices.firstOrNull { it.symbol == "^NSEI" } ?: snapshot.indices.firstOrNull()
-    NeonPanel(accent = Pink) {
+    NeonPanel(Pink) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text(section.icon, color = Yellow, fontSize = 25.sp)
                 Text(section.title, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Black)
                 Text(section.subtitle, color = TextMuted, fontSize = 11.sp)
             }
-            if (lead != null) {
-                DonutGauge(value = ((lead.changePct + 3.0) / 6.0).coerceIn(0.0, 1.0), label = "PULSE")
-            }
+            if (lead != null) DonutGauge(((lead.changePct + 3.0) / 6.0).coerceIn(0.0, 1.0), "PULSE")
         }
         Spacer(Modifier.height(14.dp))
         if (lead != null) {
@@ -300,9 +420,7 @@ private fun MarketHero(section: DashboardSection, snapshot: MarketSnapshot, load
                 }
                 Sparkline(lead.history, signColor(lead.changePct), Modifier.weight(.60f).height(72.dp))
             }
-        } else {
-            Text(if (loading) "Building live market snapshot…" else "Waiting for market feed", color = TextSoft, fontSize = 13.sp)
-        }
+        } else Text(if (loading) "Building live market snapshot…" else "Waiting for market feed", color = TextSoft, fontSize = 13.sp)
     }
 }
 
@@ -311,25 +429,16 @@ private fun BreadthStrip(snapshot: MarketSnapshot) {
     val total = max(snapshot.stocks.size, 1)
     val up = snapshot.stocks.count { it.changePct > 0 }
     val down = snapshot.stocks.count { it.changePct < 0 }
-    val upPct = up * 100f / total
-    val downPct = down * 100f / total
-
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        MetricTile("ADVANCE", "$up", "${upPct.toInt()}%", Green, Modifier.weight(1f))
-        MetricTile("DECLINE", "$down", "${downPct.toInt()}%", Red, Modifier.weight(1f))
+        MetricTile("ADVANCE", "$up", "${(up * 100f / total).toInt()}%", Green, Modifier.weight(1f))
+        MetricTile("DECLINE", "$down", "${(down * 100f / total).toInt()}%", Red, Modifier.weight(1f))
         MetricTile("COVERAGE", "${snapshot.stocks.size}", "NIFTY50", Cyan, Modifier.weight(1f))
     }
 }
 
 @Composable
 private fun MetricTile(label: String, value: String, sub: String, accent: Color, modifier: Modifier = Modifier) {
-    Box(
-        modifier
-            .clip(RoundedCornerShape(17.dp))
-            .background(Brush.verticalGradient(listOf(accent.copy(.10f), Panel)))
-            .border(1.dp, accent.copy(.22f), RoundedCornerShape(17.dp))
-            .padding(12.dp)
-    ) {
+    Box(modifier.clip(RoundedCornerShape(17.dp)).background(Brush.verticalGradient(listOf(accent.copy(.10f), Panel))).border(1.dp, accent.copy(.22f), RoundedCornerShape(17.dp)).padding(12.dp)) {
         Column {
             Text(label, color = TextMuted, fontSize = 8.sp, fontWeight = FontWeight.Bold)
             Text(value, color = accent, fontSize = 19.sp, fontWeight = FontWeight.Black)
@@ -370,14 +479,7 @@ private fun NeonQuoteCard(q: MarketQuote, accent: Color = Cyan) {
 @Composable
 private fun CompactMoverRow(q: MarketQuote, positive: Boolean) {
     val accent = if (positive) Green else Red
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(15.dp))
-            .background(Brush.horizontalGradient(listOf(accent.copy(.08f), Panel)))
-            .border(1.dp, accent.copy(.18f), RoundedCornerShape(15.dp))
-            .padding(12.dp)
-    ) {
+    Box(Modifier.fillMaxWidth().clip(RoundedCornerShape(15.dp)).background(Brush.horizontalGradient(listOf(accent.copy(.08f), Panel))).border(1.dp, accent.copy(.18f), RoundedCornerShape(15.dp)).padding(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             SymbolBadge(q.symbol, accent, 38.dp)
             Spacer(Modifier.width(10.dp))
@@ -403,7 +505,7 @@ private fun SectorBreadthPanel(stocks: List<MarketQuote>) {
             Spacer(Modifier.width(18.dp))
             Column(Modifier.weight(1f)) {
                 Text("MARKET BREADTH", color = Color.White, fontWeight = FontWeight.Black, fontSize = 14.sp)
-                Text("${up} advancing • ${stocks.count { it.changePct < 0 }} declining", color = TextSoft, fontSize = 10.sp)
+                Text("$up advancing • ${stocks.count { it.changePct < 0 }} declining", color = TextSoft, fontSize = 10.sp)
                 Spacer(Modifier.height(8.dp))
                 ProgressBar(up.toFloat() / total, Green)
             }
@@ -461,8 +563,6 @@ private fun InstitutionalPanel() {
             MetricTile("FII NET", "—", "EXCHANGE FEED", Pink, Modifier.weight(1f))
             MetricTile("DII NET", "—", "EXCHANGE FEED", Cyan, Modifier.weight(1f))
         }
-        Spacer(Modifier.height(10.dp))
-        Text("Yahoo/yfinance does not publish the official Indian FII/DII cash table. This panel stays source-safe until an NSE/NSDL-compatible feed is connected.", color = TextMuted, fontSize = 9.sp)
     }
 }
 
@@ -498,15 +598,7 @@ private fun AiNewsPanel() {
 
 @Composable
 private fun StatusCard(title: String, detail: String, accent: Color) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(13.dp))
-            .background(accent.copy(.07f))
-            .border(1.dp, accent.copy(.16f), RoundedCornerShape(13.dp))
-            .padding(11.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(13.dp)).background(accent.copy(.07f)).border(1.dp, accent.copy(.16f), RoundedCornerShape(13.dp)).padding(11.dp), verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(8.dp).clip(CircleShape).background(accent))
         Spacer(Modifier.width(9.dp))
         Text(title, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
@@ -517,16 +609,9 @@ private fun StatusCard(title: String, detail: String, accent: Color) {
 @Composable
 private fun NeonPanel(accent: Color, content: @Composable ColumnScope.() -> Unit) {
     Column(
-        Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(
-                Brush.linearGradient(
-                    listOf(accent.copy(alpha = .10f), Panel2, Panel)
-                )
-            )
-            .border(1.dp, accent.copy(alpha = .22f), RoundedCornerShape(20.dp))
-            .padding(15.dp),
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp))
+            .background(Brush.linearGradient(listOf(accent.copy(alpha = .10f), Panel2, Panel)))
+            .border(1.dp, accent.copy(alpha = .22f), RoundedCornerShape(20.dp)).padding(15.dp),
         content = content
     )
 }
@@ -535,15 +620,11 @@ private fun NeonPanel(accent: Color, content: @Composable ColumnScope.() -> Unit
 private fun SymbolBadge(symbol: String, accent: Color, size: androidx.compose.ui.unit.Dp = 44.dp) {
     val clean = symbol.removePrefix("^").removeSuffix(".NS").take(3)
     Box(
-        Modifier
-            .size(size)
-            .clip(RoundedCornerShape(13.dp))
+        Modifier.size(size).clip(RoundedCornerShape(13.dp))
             .background(Brush.linearGradient(listOf(accent.copy(.30f), Color(0xFF10192A))))
             .border(1.dp, accent.copy(.42f), RoundedCornerShape(13.dp)),
         contentAlignment = Alignment.Center
-    ) {
-        Text(clean, color = Color.White, fontSize = if (clean.length > 2) 9.sp else 11.sp, fontWeight = FontWeight.Black)
-    }
+    ) { Text(clean, color = Color.White, fontSize = if (clean.length > 2) 9.sp else 11.sp, fontWeight = FontWeight.Black) }
 }
 
 @Composable
@@ -557,15 +638,9 @@ private fun Sparkline(values: List<Double>, color: Color, modifier: Modifier = M
         values.zipWithNext().forEachIndexed { i, pair ->
             val y1 = size.height - ((pair.first - minV) / span * size.height * .78f).toFloat() - size.height * .11f
             val y2 = size.height - ((pair.second - minV) / span * size.height * .78f).toFloat() - size.height * .11f
-            drawLine(
-                color = color.copy(alpha = .90f),
-                start = Offset(i * step, y1),
-                end = Offset((i + 1) * step, y2),
-                strokeWidth = 3f,
-                cap = StrokeCap.Round
-            )
+            drawLine(color.copy(alpha = .90f), Offset(i * step, y1), Offset((i + 1) * step, y2), 3f, cap = StrokeCap.Round)
         }
-        drawLine(color.copy(.12f), Offset(0f, size.height * .5f), Offset(size.width, size.height * .5f), strokeWidth = 1f)
+        drawLine(color.copy(.12f), Offset(0f, size.height * .5f), Offset(size.width, size.height * .5f), 1f)
     }
 }
 
@@ -586,36 +661,17 @@ private fun DonutGauge(value: Double, label: String, color: Color = Pink) {
 
 @Composable
 private fun ProgressBar(value: Float, color: Color) {
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .height(7.dp)
-            .clip(CircleShape)
-            .background(Color.White.copy(.06f))
-    ) {
-        Box(
-            Modifier
-                .fillMaxWidth(value.coerceIn(0f, 1f))
-                .fillMaxHeight()
-                .clip(CircleShape)
-                .background(Brush.horizontalGradient(listOf(color.copy(.55f), color)))
-        )
+    Box(Modifier.fillMaxWidth().height(7.dp).clip(CircleShape).background(Color.White.copy(.06f))) {
+        Box(Modifier.fillMaxWidth(value.coerceIn(0f, 1f)).fillMaxHeight().clip(CircleShape).background(Brush.horizontalGradient(listOf(color.copy(.55f), color))))
     }
 }
 
 @Composable
 private fun SourceFooter() {
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(15.dp))
-            .background(Color(0xAA060B13))
-            .border(1.dp, Color.White.copy(.06f), RoundedCornerShape(15.dp))
-            .padding(12.dp)
-    ) {
+    Box(Modifier.fillMaxWidth().clip(RoundedCornerShape(15.dp)).background(Color(0xAA060B13)).border(1.dp, Color.White.copy(.06f), RoundedCornerShape(15.dp)).padding(12.dp)) {
         Column {
             Text("NSTOX ALPHA • SCREENSHOT MODE", color = Cyan, fontSize = 9.sp, fontWeight = FontWeight.Black)
-            Text("Auto market prices: Yahoo Finance chart feed (unofficial/free). Scanner values are calculated locally from fetched OHLCV. Verify exchange-sensitive data before publishing or trading.", color = TextMuted, fontSize = 8.sp)
+            Text("Auto prices use Yahoo Finance chart endpoints. If GIFT Nifty is unavailable from Yahoo, its card remains blank rather than substituting NIFTY 50. Verify exchange-sensitive data before publishing or trading.", color = TextMuted, fontSize = 8.sp)
         }
     }
 }
