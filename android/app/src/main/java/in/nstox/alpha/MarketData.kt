@@ -15,7 +15,6 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.max
 
-
 data class MarketQuote(
     val symbol: String,
     val name: String,
@@ -35,6 +34,7 @@ data class MarketQuote(
 
 data class MarketSnapshot(
     val indices: List<MarketQuote> = emptyList(),
+    val commodities: List<MarketQuote> = emptyList(),
     val stocks: List<MarketQuote> = emptyList(),
     val updatedAt: String = "--:--",
     val error: String? = null
@@ -42,15 +42,30 @@ data class MarketSnapshot(
 
 object MarketRepository {
     private val indexUniverse = listOf(
-        "^DJI" to "Dow Jones",
+        "NIFTY=F" to "GIFT Nifty",
         "^IXIC" to "NASDAQ",
+        "^DJI" to "Dow Jones",
         "^GSPC" to "S&P 500",
-        "^N225" to "Nikkei 225",
-        "^HSI" to "Hang Seng",
+        "^GDAXI" to "DAX",
         "^FTSE" to "FTSE 100",
+        "^HSI" to "Hang Seng",
+        "^N225" to "Nikkei 225",
+        "^TWII" to "Taiwan Weighted",
+        "^AXJO" to "ASX 200",
+        "^FCHI" to "CAC 40",
+        "IMOEX.ME" to "MOEX Russia",
         "^NSEI" to "NIFTY 50",
         "^NSEBANK" to "BANK NIFTY",
         "^BSESN" to "SENSEX"
+    )
+
+    private val commodityUniverse = listOf(
+        "CL=F" to "Crude Oil WTI",
+        "BZ=F" to "Brent Oil",
+        "GC=F" to "Gold",
+        "SI=F" to "Silver",
+        "HG=F" to "Copper",
+        "NG=F" to "Natural Gas"
     )
 
     private val nifty50 = listOf(
@@ -75,14 +90,21 @@ object MarketRepository {
 
     suspend fun loadSnapshot(): MarketSnapshot = withContext(Dispatchers.IO) {
         try {
-            val indices = fetchUniverse(indexUniverse)
-            val stocks = fetchUniverse(nifty50)
-            MarketSnapshot(
-                indices = indices,
-                stocks = stocks,
-                updatedAt = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date()),
-                error = if (indices.isEmpty() && stocks.isEmpty()) "Market feed temporarily unavailable" else null
-            )
+            coroutineScope {
+                val indicesDeferred = async { fetchUniverse(indexUniverse) }
+                val commoditiesDeferred = async { fetchUniverse(commodityUniverse) }
+                val stocksDeferred = async { fetchUniverse(nifty50) }
+                val indices = indicesDeferred.await()
+                val commodities = commoditiesDeferred.await()
+                val stocks = stocksDeferred.await()
+                MarketSnapshot(
+                    indices = indices,
+                    commodities = commodities,
+                    stocks = stocks,
+                    updatedAt = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date()),
+                    error = if (indices.isEmpty() && commodities.isEmpty() && stocks.isEmpty()) "Market feed temporarily unavailable" else null
+                )
+            }
         } catch (t: Throwable) {
             MarketSnapshot(error = t.message ?: "Unable to load market data")
         }
@@ -106,7 +128,7 @@ object MarketRepository {
         conn.connectTimeout = 8000
         conn.readTimeout = 10000
         conn.requestMethod = "GET"
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0 NSTOX-ALPHA/0.2")
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 NSTOX-ALPHA/0.3")
         conn.setRequestProperty("Accept", "application/json")
         try {
             if (conn.responseCode !in 200..299) error("Yahoo HTTP ${conn.responseCode}")
@@ -145,7 +167,6 @@ object MarketRepository {
         val avgVolume20 = volumes.dropLast(1).takeLast(20).filter { it > 0 }.average().let { if (it.isNaN()) 0.0 else it }
         val high52 = max(meta.optDouble("fiftyTwoWeekHigh", 0.0), highs.maxOrNull() ?: 0.0)
         val low52 = if (meta.optDouble("fiftyTwoWeekLow", 0.0) > 0) meta.optDouble("fiftyTwoWeekLow") else lows.minOrNull() ?: 0.0
-        val spark = closes.takeLast(32)
 
         return MarketQuote(
             symbol = symbol,
@@ -157,7 +178,7 @@ object MarketRepository {
             avgVolume20 = avgVolume20,
             yearHigh = high52,
             yearLow = low52,
-            history = spark
+            history = closes.takeLast(32)
         )
     }
 }
